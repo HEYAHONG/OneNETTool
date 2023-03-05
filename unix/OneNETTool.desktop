@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=OneNETTool
+GenericName=OneNETTool
+Comment=OneNETTool By HYH
+Exec=OneNETTool
+Icon=OneNETTool
+Type=Application
+Categories=Util;Iot;
