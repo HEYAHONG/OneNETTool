@@ -6,7 +6,7 @@
 #pragma hdrstop
 #endif //__BORLANDC__
 
-#include "App.h"
+#include "app.h"
 #include "frame.h"
 #include "wx/image.h"
 #include "wx/fs_mem.h"

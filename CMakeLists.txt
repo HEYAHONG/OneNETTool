@@ -47,6 +47,7 @@ endif()
 include(${wxWidgets_USE_FILE})
 target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES})
 
+include(GNUInstallDirs)
 
 #添加组件(components)
 include(cmake/components.cmake)
