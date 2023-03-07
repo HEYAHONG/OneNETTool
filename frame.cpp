@@ -286,7 +286,7 @@ void Frame::OnTokenGenerateButtonClick( wxCommandEvent& event )
             method_enum=ONENET_CRYPTO_SHA256;
         }
 
-        uint8_t signout_blob[64]= {0};
+        uint8_t signout_blob[ONENET_HMAC_OUT_MAX]= {0};
         size_t signout_length=OneNETHmac(method_enum,signout_blob,sizeof(signout_blob),key_blob,key_blob_length,(uint8_t *)StringForSignature.ToStdString().c_str(),StringForSignature.ToStdString().length());
         if(signout_length==0)
         {

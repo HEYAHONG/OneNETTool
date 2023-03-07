@@ -22,6 +22,8 @@ typedef enum
     ONENET_CRYPTO_DEFAULT=ONENET_CRYPTO_SHA256
 } OneNETTokenCryptoMethod;
 
+#define ONENET_HMAC_OUT_MAX 64
+
 size_t OneNETHmac(OneNETTokenCryptoMethod method,uint8_t *out,size_t outlen,const uint8_t *key,size_t keylen,const uint8_t *data,size_t datalen);
 
 
