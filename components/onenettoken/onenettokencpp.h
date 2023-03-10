@@ -14,6 +14,10 @@
 #define ONENETCPP_DEFAULT_METHOD "sha256"
 #endif // ONENETCPP_DEFAULT_METHOD
 
+std::string OneNETTokenGetDeviceRes(std::string pruductid,std::string devicename);
+
+std::string OneNETTokenGetProductRes(std::string pruductid);
+
 std::string OneNETTokenGetSign(time_t _et,std::string res,std::string key,std::string method=ONENETCPP_DEFAULT_METHOD,std::string version=ONENETCPP_DEFAULT_VERSION);
 
 

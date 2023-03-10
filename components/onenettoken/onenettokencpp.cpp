@@ -1,5 +1,15 @@
 #include "onenettokencpp.h"
 
+std::string OneNETTokenGetDeviceRes(std::string pruductid,std::string devicename)
+{
+    return std::string("products/")+pruductid+"/devices/"+devicename;
+}
+
+std::string OneNETTokenGetProductRes(std::string pruductid)
+{
+    return std::string("products/")+pruductid;
+}
+
 std::string OneNETTokenGetSign(time_t _et,std::string res,std::string key,std::string method,std::string version)
 {
     std::string sign;
