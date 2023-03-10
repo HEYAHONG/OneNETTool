@@ -11,8 +11,6 @@ public:
     Frame();
     virtual ~Frame();
 
-    wxString OneNETGetStringForSignature(wxString et,wxString method,wxString res,wxString version);
-    wxString OneNETGetUrlFormString(wxString et,wxString method,wxString res,wxString version,wxString sign);
 
 protected:
     virtual void OnTokenSize( wxSizeEvent& event );

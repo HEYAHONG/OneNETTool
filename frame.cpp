@@ -7,6 +7,7 @@
 #include "wx/time.h"
 #include "wx/clipbrd.h"
 #include "onenettoken.h"
+#include "onenettokencpp.h"
 
 extern "C"
 {
@@ -59,33 +60,6 @@ Frame::Frame():MainFrame(NULL),app(*GetInstance())
         }
 
     });
-}
-
-wxString Frame::OneNETGetStringForSignature(wxString et,wxString method,wxString res,wxString version)
-{
-    return et+_T("\n")+method+_T("\n")+res+_T("\n")+version;
-}
-
-wxString Frame::OneNETGetUrlFormString(wxString et,wxString method,wxString res,wxString version,wxString sign)
-{
-    auto tourl=[](wxString &urlvalue)
-    {
-        urlvalue.Replace(_T("%"),_T("%25"));
-        urlvalue.Replace(_T("+"),_T("%2B"));
-        urlvalue.Replace(_T(" "),_T("%20"));
-        urlvalue.Replace(_T("/"),_T("%2F"));
-        urlvalue.Replace(_T("?"),_T("%3F"));
-        urlvalue.Replace(_T("#"),_T("%23"));
-        urlvalue.Replace(_T("&"),_T("%26"));
-        urlvalue.Replace(_T("="),_T("%3D"));
-    };
-    tourl(et);
-    tourl(method);
-    tourl(res);
-    tourl(version);
-    tourl(sign);
-
-    return wxString(_T("version="))+version+_T("&res=")+res+_T("&et=")+et+_T("&method=")+method+_T("&sign=")+sign;
 }
 
 void Frame::OnTokenSize( wxSizeEvent& event )
@@ -264,44 +238,16 @@ void Frame::OnTokenGenerateButtonClick( wxCommandEvent& event )
     wxLogMessage(_T("即将生成token,参数:version=%s,et=%s,method=%s,res=%s,key=%s"),version,et,method,res,key);
     wxString token;
     {
-        wxString StringForSignature=OneNETGetStringForSignature(et,method,res,version);
-        uint8_t key_blob[key.length()]= {0};
-        size_t  key_blob_length=OneNETBase64Decode(key_blob,sizeof(key_blob),(uint8_t *)key.ToAscii().data(),key.length());
-        if(key_blob_length==0)
+        long long et_val=0;
+        et.ToLongLong(&et_val);
+        std::string sign=OneNETTokenGetSign((time_t)et_val,res.ToStdString(),key.ToStdString(),method.ToStdString(),version.ToStdString());
+        if(sign.empty())
         {
-            wxMessageBox(_T("密钥错误(可能不是Base64字符串)!"),_T("错误"));
+            wxLogMessage(_T("签名失败"),_T("错误"));
             return;
         }
-        OneNETTokenCryptoMethod method_enum=ONENET_CRYPTO_DEFAULT;
-        if(method==_T("md5"))
-        {
-            method_enum=ONENET_CRYPTO_MD5;
-        }
-        if(method==_T("sha1"))
-        {
-            method_enum=ONENET_CRYPTO_SHA1;
-        }
-        if(method==_T("sha256"))
-        {
-            method_enum=ONENET_CRYPTO_SHA256;
-        }
-
-        uint8_t signout_blob[ONENET_HMAC_OUT_MAX]= {0};
-        size_t signout_length=OneNETHmac(method_enum,signout_blob,sizeof(signout_blob),key_blob,key_blob_length,(uint8_t *)StringForSignature.ToStdString().c_str(),StringForSignature.ToStdString().length());
-        if(signout_length==0)
-        {
-            wxMessageBox(_T("签署失败!"),_T("错误"));
-            return;
-        }
-        const char sign[signout_length*4/3+4]= {0};
-        size_t sign_length=OneNETBase64Encode((uint8_t *)sign,sizeof(sign),signout_blob,signout_length);
-        if(sign_length==0)
-        {
-            wxMessageBox(_T("Base64加密错误!"),_T("错误"));
-            return;
-        }
-        wxLogMessage(_T("签名成功:sign=%s"),wxString::FromUTF8(sign));
-        token=OneNETGetUrlFormString(et,method,res,version,wxString::FromUTF8(sign));
+        wxLogMessage(_T("签名成功:sign=%s"),wxString::FromUTF8(sign.c_str()));
+        token=wxString::FromUTF8(OneNETTokenGenerateURLToken((time_t)et_val,res.ToStdString(),sign,method.ToStdString(),version.ToStdString()).c_str());
         wxLogMessage(_T("token已生成:%s"),token);
     }
     if (wxTheClipboard->Open())
