@@ -8,6 +8,10 @@
 #include "wx/clipbrd.h"
 #include "onenettoken.h"
 #include "onenettokencpp.h"
+#include <wx/filedlg.h>
+#include "xlsxio_write.h"
+#include "xlsxio_read.h"
+
 
 extern "C"
 {
@@ -43,11 +47,21 @@ Frame::Frame():MainFrame(NULL),app(*GetInstance())
     app.AddUIEvent([=,this]()
     {
         {
+            //显示ReadMe.txt文件
             const char * readme_txt=(const char *)wxRCGetHandle("ReadMe.txt");
             if(readme_txt!=NULL)
             {
                 wxLogMessage(_("%s"),wxString::FromUTF8(readme_txt));
             }
+        }
+        {
+            //显示LwM2MReadMe.txt文件
+            const char * lwm2m_readme_txt=(const char *)wxRCGetHandle("LwM2MReadMe.txt");
+            if(lwm2m_readme_txt!=NULL)
+            {
+                m_textCtrl_LwM2MDeviceList->SetValue(wxString::FromUTF8(lwm2m_readme_txt));
+            }
+
         }
         {
             //设置token界面
@@ -260,6 +274,65 @@ void Frame::OnTokenGenerateButtonClick( wxCommandEvent& event )
 
 }
 
+void  Frame::OnMenuLwM2MDeviceListClearAll( wxCommandEvent& event )
+{
+    ClearAllLwM2MDevice();
+}
+
+void Frame::OnMenuLwM2MDeviceListRemove( wxCommandEvent& event )
+{
+    if(m_dataViewListCtrl_LwM2MDeviceList->GetSelectedRow() >=0)
+    {
+        RemoveLwM2MDevice(m_dataViewListCtrl_LwM2MDeviceList->GetSelectedRow());
+    }
+}
+
+void Frame::OnLwM2MDeviceListContextMenu( wxDataViewEvent& event )
+{
+
+    PopupMenu(m_menu_LwM2MDeviceList);
+}
+
+void Frame::OnLwM2MDeviceListSaveButtonClick( wxCommandEvent& event )
+{
+    wxFileDialog savedlg(this,_T("请选择保存路径:"),wxEmptyString,wxEmptyString,_T("XLSX 文件 | *.xlsx"),wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+    if(savedlg.ShowModal()==wxID_OK)
+    {
+        xlsxiowriter handle=xlsxiowrite_open(savedlg.GetPath().ToStdString().c_str(),"Sheet1");
+        if(handle!=NULL)
+        {
+            xlsxiowrite_set_row_height(handle, 1);
+            xlsxiowrite_add_cell_string(handle,"DeviceName");
+            xlsxiowrite_add_cell_string(handle,"IMEI");
+            xlsxiowrite_add_cell_string(handle,"IMSI");
+            xlsxiowrite_add_cell_string(handle,"AuthCode");
+            xlsxiowrite_add_cell_string(handle,"PSK");
+            xlsxiowrite_next_row(handle);
+
+            for(auto LwM2MDevice:LwM2MDeviceList)
+            {
+                xlsxiowrite_add_cell_string(handle,LwM2MDevice.DeviceName.ToStdString().c_str());
+                xlsxiowrite_add_cell_string(handle,LwM2MDevice.IMEI.ToStdString().c_str());
+                xlsxiowrite_add_cell_string(handle,LwM2MDevice.IMSI.ToStdString().c_str());
+                xlsxiowrite_add_cell_string(handle,LwM2MDevice.AuthCode.ToStdString().c_str());
+                xlsxiowrite_add_cell_string(handle,LwM2MDevice.PSK.ToStdString().c_str());
+                xlsxiowrite_next_row(handle);
+            }
+
+            xlsxiowrite_close(handle);
+        }
+        else
+        {
+            wxMessageBox(_T("写入失败!"),_T("错误"));
+        }
+    }
+}
+
+void Frame::OnButtonLwM2MDeviceListClearAllClick( wxCommandEvent& event )
+{
+    ClearAllLwM2MDevice();
+}
+
 void Frame::OnMenuFileSubExit( wxCommandEvent& event )
 {
     Destroy();
@@ -282,6 +355,54 @@ void Frame::OnMenuHelpAbout( wxCommandEvent& event )
 {
     about dlg(this);
     dlg.ShowModal();
+}
+
+void Frame::ClearAllLwM2MDevice()
+{
+    auto cb=[=,this]()
+    {
+        LwM2MDeviceList.clear();
+        m_dataViewListCtrl_LwM2MDeviceList->DeleteAllItems();
+    };
+    app.AddUIEvent(cb);
+}
+
+void Frame::AddLwM2MDevice(LwM2MDevice device)
+{
+    auto cb=[=,this]()
+    {
+        if(device.DeviceName.IsEmpty() || device.IMEI.IsEmpty() || device.IMSI.IsEmpty())
+        {
+            return;
+        }
+        LwM2MDeviceList.push_back(device);
+        {
+            wxVector<wxVariant> data;
+            data.push_back(device.DeviceName);
+            data.push_back(device.IMEI);
+            data.push_back(device.IMSI);
+            data.push_back(device.AuthCode);
+            data.push_back(device.PSK);
+            m_dataViewListCtrl_LwM2MDeviceList->AppendItem(data);
+        }
+    };
+    app.AddUIEvent(cb);
+}
+
+void Frame::RemoveLwM2MDevice(size_t index)
+{
+    auto cb=[=,this]()
+    {
+        if(index >= LwM2MDeviceList.size())
+        {
+            return;
+        }
+        std::vector<LwM2MDevice>::iterator it=LwM2MDeviceList.begin();
+        std::advance(it,index);
+        LwM2MDeviceList.erase(it);
+        m_dataViewListCtrl_LwM2MDeviceList->DeleteItem(index);
+    };
+    app.AddUIEvent(cb);
 }
 
 Frame::~Frame()

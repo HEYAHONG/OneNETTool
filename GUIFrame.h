@@ -25,8 +25,9 @@
 #include <wx/image.h>
 #include <wx/icon.h>
 #include <wx/scrolwin.h>
-#include <wx/aui/auibook.h>
 #include <wx/menu.h>
+#include <wx/dataview.h>
+#include <wx/aui/auibook.h>
 #include <wx/statusbr.h>
 #include <wx/panel.h>
 #include <wx/frame.h>
@@ -68,6 +69,17 @@ class MainFrame : public wxFrame
 		wxStaticText* m_staticText_tokenkey;
 		wxTextCtrl* m_textCtrl_tokenkey;
 		wxButton* m_button_tokengenerate;
+		wxScrolledWindow* m_LwM2MDeviceList;
+		wxMenu* m_menu_LwM2MDeviceList;
+		wxDataViewListCtrl* m_dataViewListCtrl_LwM2MDeviceList;
+		wxDataViewColumn* m_dataViewListColumn_LwM2MDeviceList_DeviceName;
+		wxDataViewColumn* m_dataViewListColumn_LwM2MDeviceList_IMEI;
+		wxDataViewColumn* m_dataViewListColumn_LwM2MDeviceList_IMSI;
+		wxDataViewColumn* m_dataViewListColumn_LwM2MDeviceList_AuthCode;
+		wxDataViewColumn* m_dataViewListColumn_LwM2MDeviceList_PSK;
+		wxTextCtrl* m_textCtrl_LwM2MDeviceList;
+		wxButton* m_button_LwM2MDeviceList_ClearAll;
+		wxButton* m_button_LwM2MDeviceList_Save;
 		wxMenuBar* m_menubar;
 		wxMenu* MenuFile;
 		wxMenu* MenuLinks;
@@ -83,6 +95,11 @@ class MainFrame : public wxFrame
 		virtual void OnTokenetTextUpdate( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnTokenresChoice( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnTokenGenerateButtonClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnMenuLwM2MDeviceListClearAll( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnMenuLwM2MDeviceListRemove( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnLwM2MDeviceListContextMenu( wxDataViewEvent& event ) { event.Skip(); }
+		virtual void OnButtonLwM2MDeviceListClearAllClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnLwM2MDeviceListSaveButtonClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnMenuFileSubExit( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnMenuLinksSubOneNET( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnMenuLinksSubOneNETToken( wxCommandEvent& event ) { event.Skip(); }
@@ -96,6 +113,11 @@ class MainFrame : public wxFrame
 		wxAuiManager m_mgr;
 
 		~MainFrame();
+
+		void m_LwM2MDeviceListOnContextMenu( wxMouseEvent &event )
+		{
+			m_LwM2MDeviceList->PopupMenu( m_menu_LwM2MDeviceList, event.GetPosition() );
+		}
 
 };
 

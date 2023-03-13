@@ -166,7 +166,64 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_token->SetSizer( fgSizer_token );
 	m_token->Layout();
 	fgSizer_token->Fit( m_token );
-	m_main->AddPage( m_token, wxT("Token"), false, wxNullBitmap );
+	m_main->AddPage( m_token, wxT("Token"), true, wxNullBitmap );
+	m_LwM2MDeviceList = new wxScrolledWindow( m_main, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL );
+	m_LwM2MDeviceList->SetScrollRate( 5, 5 );
+	m_menu_LwM2MDeviceList = new wxMenu();
+	wxMenuItem* m_menuItem_LwM2MDeviceList_Add;
+	m_menuItem_LwM2MDeviceList_Add = new wxMenuItem( m_menu_LwM2MDeviceList, wxID_ANY, wxString( wxT("添加设备") ) , wxEmptyString, wxITEM_NORMAL );
+	m_menu_LwM2MDeviceList->Append( m_menuItem_LwM2MDeviceList_Add );
+
+	wxMenuItem* m_menuItem__LwM2MDeviceList_ClearAll;
+	m_menuItem__LwM2MDeviceList_ClearAll = new wxMenuItem( m_menu_LwM2MDeviceList, wxID_ANY, wxString( wxT("清除所有") ) , wxEmptyString, wxITEM_NORMAL );
+	m_menu_LwM2MDeviceList->Append( m_menuItem__LwM2MDeviceList_ClearAll );
+
+	wxMenuItem* m_menuItem_m_menuItem__LwM2MDeviceList_Remove;
+	m_menuItem_m_menuItem__LwM2MDeviceList_Remove = new wxMenuItem( m_menu_LwM2MDeviceList, wxID_ANY, wxString( wxT("删除选中的行") ) , wxEmptyString, wxITEM_NORMAL );
+	m_menu_LwM2MDeviceList->Append( m_menuItem_m_menuItem__LwM2MDeviceList_Remove );
+
+	m_LwM2MDeviceList->Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( MainFrame::m_LwM2MDeviceListOnContextMenu ), NULL, this );
+
+	wxFlexGridSizer* fgSizer_LwM2MDeviceList;
+	fgSizer_LwM2MDeviceList = new wxFlexGridSizer( 0, 1, 0, 0 );
+	fgSizer_LwM2MDeviceList->SetFlexibleDirection( wxVERTICAL );
+	fgSizer_LwM2MDeviceList->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+
+
+	fgSizer_LwM2MDeviceList->Add( 750, 0, 1, wxFIXED_MINSIZE, 5 );
+
+	m_dataViewListCtrl_LwM2MDeviceList = new wxDataViewListCtrl( m_LwM2MDeviceList, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE );
+	m_dataViewListCtrl_LwM2MDeviceList->SetMinSize( wxSize( -1,300 ) );
+
+	m_dataViewListColumn_LwM2MDeviceList_DeviceName = m_dataViewListCtrl_LwM2MDeviceList->AppendTextColumn( wxT("DeviceName"), wxDATAVIEW_CELL_INERT, 100, static_cast<wxAlignment>(wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL), wxDATAVIEW_COL_RESIZABLE );
+	m_dataViewListColumn_LwM2MDeviceList_IMEI = m_dataViewListCtrl_LwM2MDeviceList->AppendTextColumn( wxT("IMEI"), wxDATAVIEW_CELL_INERT, 200, static_cast<wxAlignment>(wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL), wxDATAVIEW_COL_RESIZABLE );
+	m_dataViewListColumn_LwM2MDeviceList_IMSI = m_dataViewListCtrl_LwM2MDeviceList->AppendTextColumn( wxT("IMSI"), wxDATAVIEW_CELL_INERT, 200, static_cast<wxAlignment>(wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL), wxDATAVIEW_COL_RESIZABLE );
+	m_dataViewListColumn_LwM2MDeviceList_AuthCode = m_dataViewListCtrl_LwM2MDeviceList->AppendTextColumn( wxT("AuthCode"), wxDATAVIEW_CELL_INERT, 100, static_cast<wxAlignment>(wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL), wxDATAVIEW_COL_RESIZABLE );
+	m_dataViewListColumn_LwM2MDeviceList_PSK = m_dataViewListCtrl_LwM2MDeviceList->AppendTextColumn( wxT("PSK"), wxDATAVIEW_CELL_INERT, -1, static_cast<wxAlignment>(wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL), wxDATAVIEW_COL_RESIZABLE );
+	fgSizer_LwM2MDeviceList->Add( m_dataViewListCtrl_LwM2MDeviceList, 1, wxALL|wxEXPAND, 5 );
+
+	m_textCtrl_LwM2MDeviceList = new wxTextCtrl( m_LwM2MDeviceList, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY );
+	m_textCtrl_LwM2MDeviceList->SetMinSize( wxSize( -1,125 ) );
+
+	fgSizer_LwM2MDeviceList->Add( m_textCtrl_LwM2MDeviceList, 1, wxALL|wxEXPAND, 5 );
+
+	wxBoxSizer* bSizer_LwM2MDeviceList;
+	bSizer_LwM2MDeviceList = new wxBoxSizer( wxHORIZONTAL );
+
+	m_button_LwM2MDeviceList_ClearAll = new wxButton( m_LwM2MDeviceList, wxID_ANY, wxT("清除所有"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer_LwM2MDeviceList->Add( m_button_LwM2MDeviceList_ClearAll, 0, wxALL, 5 );
+
+	m_button_LwM2MDeviceList_Save = new wxButton( m_LwM2MDeviceList, wxID_ANY, wxT("保存"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer_LwM2MDeviceList->Add( m_button_LwM2MDeviceList_Save, 0, wxALL, 5 );
+
+
+	fgSizer_LwM2MDeviceList->Add( bSizer_LwM2MDeviceList, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+
+	m_LwM2MDeviceList->SetSizer( fgSizer_LwM2MDeviceList );
+	m_LwM2MDeviceList->Layout();
+	fgSizer_LwM2MDeviceList->Fit( m_LwM2MDeviceList );
+	m_main->AddPage( m_LwM2MDeviceList, wxT("LwM2M设备列表"), false, wxNullBitmap );
 
 	m_menubar = new wxMenuBar( 0 );
 	MenuFile = new wxMenu();
@@ -227,6 +284,11 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_textCtrl_tokenet->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::OnTokenetTextUpdate ), NULL, this );
 	m_choice_tokenres->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MainFrame::OnTokenresChoice ), NULL, this );
 	m_button_tokengenerate->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::OnTokenGenerateButtonClick ), NULL, this );
+	m_menu_LwM2MDeviceList->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::OnMenuLwM2MDeviceListClearAll ), this, m_menuItem__LwM2MDeviceList_ClearAll->GetId());
+	m_menu_LwM2MDeviceList->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::OnMenuLwM2MDeviceListRemove ), this, m_menuItem_m_menuItem__LwM2MDeviceList_Remove->GetId());
+	m_dataViewListCtrl_LwM2MDeviceList->Connect( wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler( MainFrame::OnLwM2MDeviceListContextMenu ), NULL, this );
+	m_button_LwM2MDeviceList_ClearAll->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::OnButtonLwM2MDeviceListClearAllClick ), NULL, this );
+	m_button_LwM2MDeviceList_Save->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::OnLwM2MDeviceListSaveButtonClick ), NULL, this );
 	MenuFile->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::OnMenuFileSubExit ), this, MenuFileSubExit->GetId());
 	MenuLinks->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::OnMenuLinksSubOneNET ), this, MenuLinksSubOneNET->GetId());
 	MenuLinks->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::OnMenuLinksSubOneNETToken ), this, MenuLinksSubOneNETToken->GetId());
@@ -241,9 +303,13 @@ MainFrame::~MainFrame()
 	m_textCtrl_tokenet->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::OnTokenetTextUpdate ), NULL, this );
 	m_choice_tokenres->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MainFrame::OnTokenresChoice ), NULL, this );
 	m_button_tokengenerate->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::OnTokenGenerateButtonClick ), NULL, this );
+	m_dataViewListCtrl_LwM2MDeviceList->Disconnect( wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler( MainFrame::OnLwM2MDeviceListContextMenu ), NULL, this );
+	m_button_LwM2MDeviceList_ClearAll->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::OnButtonLwM2MDeviceListClearAllClick ), NULL, this );
+	m_button_LwM2MDeviceList_Save->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::OnLwM2MDeviceListSaveButtonClick ), NULL, this );
 
 	m_mgr.UnInit();
 
+	delete m_menu_LwM2MDeviceList;
 }
 
 AboutDialog::AboutDialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
