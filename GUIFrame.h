@@ -95,6 +95,7 @@ class MainFrame : public wxFrame
 		virtual void OnTokenetTextUpdate( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnTokenresChoice( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnTokenGenerateButtonClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnMenuLwM2MDeviceAdd( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnMenuLwM2MDeviceListClearAll( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnMenuLwM2MDeviceListRemove( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnLwM2MDeviceListContextMenu( wxDataViewEvent& event ) { event.Skip(); }
@@ -150,6 +151,41 @@ class AboutDialog : public wxDialog
 		wxAuiManager m_mgr;
 
 		~AboutDialog();
+
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class NewLwM2MDeviceDialog
+///////////////////////////////////////////////////////////////////////////////
+class NewLwM2MDeviceDialog : public wxDialog
+{
+	private:
+
+	protected:
+		wxAuiNotebook* m_auinotebook_NewLwM2MDevice;
+		wxScrolledWindow* m_scrolledWindow_NewLwM2MDevice_Manual;
+		wxStaticText* m_staticText_NewLwM2MDevice_Manual_DeviceName;
+		wxTextCtrl* m_textCtrl_NewLwM2MDevice_Manual_DeviceName;
+		wxStaticText* m_staticText__NewLwM2MDevice_Manual_IMEI;
+		wxTextCtrl* m_textCtrl__NewLwM2MDevice_Manual_IMEI;
+		wxStaticText* m_staticText__NewLwM2MDevice_Manual_IMSI;
+		wxTextCtrl* m_textCtrl__NewLwM2MDevice_Manual_IMSI;
+		wxStaticText* m_staticText__NewLwM2MDevice_Manual_AuthCode;
+		wxTextCtrl* m_textCtrl__NewLwM2MDevice_Manual_AuthCode;
+		wxStaticText* m_staticText__NewLwM2MDevice_Manual_PSK;
+		wxTextCtrl* m_textCtrl__NewLwM2MDevice_Manual_PSK;
+		wxButton* m_button_NewLwM2MDevice_Manual_OK;
+		wxTextCtrl* m_textCtrl_NewLwM2MDevice_Manual_ReadMe;
+
+		// Virtual event handlers, override them in your derived class
+		virtual void OnNewLwM2MDeviceManualOK( wxCommandEvent& event ) { event.Skip(); }
+
+
+	public:
+
+		NewLwM2MDeviceDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("添加LwM2M设备"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );
+
+		~NewLwM2MDeviceDialog();
 
 };
 

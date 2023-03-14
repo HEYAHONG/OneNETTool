@@ -8,6 +8,7 @@
 #include "wx/clipbrd.h"
 #include "onenettoken.h"
 #include "onenettokencpp.h"
+#include "newlwm2mdevice.h"
 #include <wx/filedlg.h>
 #include "xlsxio_write.h"
 #include "xlsxio_read.h"
@@ -272,6 +273,21 @@ void Frame::OnTokenGenerateButtonClick( wxCommandEvent& event )
     }
 
 
+}
+
+void Frame::OnMenuLwM2MDeviceAdd( wxCommandEvent& event )
+{
+    NewLwM2MDevice dlg(this);
+    if(dlg.ShowModal()==wxID_OK)
+    {
+        LwM2MDevice device;
+        device.DeviceName=dlg.DeviceName;
+        device.IMEI=dlg.IMEI;
+        device.IMSI=dlg.IMSI;
+        device.AuthCode=dlg.AuthCode;
+        device.PSK=dlg.PSK;
+        AddLwM2MDevice(device);
+    }
 }
 
 void  Frame::OnMenuLwM2MDeviceListClearAll( wxCommandEvent& event )

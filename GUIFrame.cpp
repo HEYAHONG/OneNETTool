@@ -190,12 +190,12 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	fgSizer_LwM2MDeviceList->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
 
-	fgSizer_LwM2MDeviceList->Add( 750, 0, 1, wxFIXED_MINSIZE, 5 );
+	fgSizer_LwM2MDeviceList->Add( 800, 0, 1, wxFIXED_MINSIZE, 5 );
 
 	m_dataViewListCtrl_LwM2MDeviceList = new wxDataViewListCtrl( m_LwM2MDeviceList, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE );
 	m_dataViewListCtrl_LwM2MDeviceList->SetMinSize( wxSize( -1,300 ) );
 
-	m_dataViewListColumn_LwM2MDeviceList_DeviceName = m_dataViewListCtrl_LwM2MDeviceList->AppendTextColumn( wxT("DeviceName"), wxDATAVIEW_CELL_INERT, 100, static_cast<wxAlignment>(wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL), wxDATAVIEW_COL_RESIZABLE );
+	m_dataViewListColumn_LwM2MDeviceList_DeviceName = m_dataViewListCtrl_LwM2MDeviceList->AppendTextColumn( wxT("DeviceName"), wxDATAVIEW_CELL_INERT, 150, static_cast<wxAlignment>(wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL), wxDATAVIEW_COL_RESIZABLE );
 	m_dataViewListColumn_LwM2MDeviceList_IMEI = m_dataViewListCtrl_LwM2MDeviceList->AppendTextColumn( wxT("IMEI"), wxDATAVIEW_CELL_INERT, 200, static_cast<wxAlignment>(wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL), wxDATAVIEW_COL_RESIZABLE );
 	m_dataViewListColumn_LwM2MDeviceList_IMSI = m_dataViewListCtrl_LwM2MDeviceList->AppendTextColumn( wxT("IMSI"), wxDATAVIEW_CELL_INERT, 200, static_cast<wxAlignment>(wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL), wxDATAVIEW_COL_RESIZABLE );
 	m_dataViewListColumn_LwM2MDeviceList_AuthCode = m_dataViewListCtrl_LwM2MDeviceList->AppendTextColumn( wxT("AuthCode"), wxDATAVIEW_CELL_INERT, 100, static_cast<wxAlignment>(wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL), wxDATAVIEW_COL_RESIZABLE );
@@ -284,6 +284,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_textCtrl_tokenet->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MainFrame::OnTokenetTextUpdate ), NULL, this );
 	m_choice_tokenres->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MainFrame::OnTokenresChoice ), NULL, this );
 	m_button_tokengenerate->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::OnTokenGenerateButtonClick ), NULL, this );
+	m_menu_LwM2MDeviceList->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::OnMenuLwM2MDeviceAdd ), this, m_menuItem_LwM2MDeviceList_Add->GetId());
 	m_menu_LwM2MDeviceList->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::OnMenuLwM2MDeviceListClearAll ), this, m_menuItem__LwM2MDeviceList_ClearAll->GetId());
 	m_menu_LwM2MDeviceList->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::OnMenuLwM2MDeviceListRemove ), this, m_menuItem_m_menuItem__LwM2MDeviceList_Remove->GetId());
 	m_dataViewListCtrl_LwM2MDeviceList->Connect( wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler( MainFrame::OnLwM2MDeviceListContextMenu ), NULL, this );
@@ -392,5 +393,109 @@ AboutDialog::AboutDialog( wxWindow* parent, wxWindowID id, const wxString& title
 AboutDialog::~AboutDialog()
 {
 	m_mgr.UnInit();
+
+}
+
+NewLwM2MDeviceDialog::NewLwM2MDeviceDialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxSize( 450,600 ), wxDefaultSize );
+
+	wxBoxSizer* bSizer_NewLwM2MDevice;
+	bSizer_NewLwM2MDevice = new wxBoxSizer( wxVERTICAL );
+
+	bSizer_NewLwM2MDevice->SetMinSize( wxSize( 450,600 ) );
+	m_auinotebook_NewLwM2MDevice = new wxAuiNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_TOP );
+	m_scrolledWindow_NewLwM2MDevice_Manual = new wxScrolledWindow( m_auinotebook_NewLwM2MDevice, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL );
+	m_scrolledWindow_NewLwM2MDevice_Manual->SetScrollRate( 5, 5 );
+	wxBoxSizer* bSizer__NewLwM2MDevice_Manual;
+	bSizer__NewLwM2MDevice_Manual = new wxBoxSizer( wxVERTICAL );
+
+	wxFlexGridSizer* fgSizer__NewLwM2MDevice_Manual;
+	fgSizer__NewLwM2MDevice_Manual = new wxFlexGridSizer( 0, 2, 0, 0 );
+	fgSizer__NewLwM2MDevice_Manual->SetFlexibleDirection( wxBOTH );
+	fgSizer__NewLwM2MDevice_Manual->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+
+
+	fgSizer__NewLwM2MDevice_Manual->Add( 150, 10, 1, wxEXPAND, 5 );
+
+
+	fgSizer__NewLwM2MDevice_Manual->Add( 250, 0, 1, wxEXPAND, 5 );
+
+	m_staticText_NewLwM2MDevice_Manual_DeviceName = new wxStaticText( m_scrolledWindow_NewLwM2MDevice_Manual, wxID_ANY, wxT("DeviceName*:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	m_staticText_NewLwM2MDevice_Manual_DeviceName->Wrap( -1 );
+	fgSizer__NewLwM2MDevice_Manual->Add( m_staticText_NewLwM2MDevice_Manual_DeviceName, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_textCtrl_NewLwM2MDevice_Manual_DeviceName = new wxTextCtrl( m_scrolledWindow_NewLwM2MDevice_Manual, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_CENTER );
+	fgSizer__NewLwM2MDevice_Manual->Add( m_textCtrl_NewLwM2MDevice_Manual_DeviceName, 1, wxALL|wxEXPAND, 5 );
+
+	m_staticText__NewLwM2MDevice_Manual_IMEI = new wxStaticText( m_scrolledWindow_NewLwM2MDevice_Manual, wxID_ANY, wxT("IMEI*:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText__NewLwM2MDevice_Manual_IMEI->Wrap( -1 );
+	fgSizer__NewLwM2MDevice_Manual->Add( m_staticText__NewLwM2MDevice_Manual_IMEI, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_textCtrl__NewLwM2MDevice_Manual_IMEI = new wxTextCtrl( m_scrolledWindow_NewLwM2MDevice_Manual, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_CENTER );
+	fgSizer__NewLwM2MDevice_Manual->Add( m_textCtrl__NewLwM2MDevice_Manual_IMEI, 1, wxALL|wxEXPAND, 5 );
+
+	m_staticText__NewLwM2MDevice_Manual_IMSI = new wxStaticText( m_scrolledWindow_NewLwM2MDevice_Manual, wxID_ANY, wxT("IMSI*:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText__NewLwM2MDevice_Manual_IMSI->Wrap( -1 );
+	fgSizer__NewLwM2MDevice_Manual->Add( m_staticText__NewLwM2MDevice_Manual_IMSI, 0, wxALL|wxALIGN_RIGHT, 5 );
+
+	m_textCtrl__NewLwM2MDevice_Manual_IMSI = new wxTextCtrl( m_scrolledWindow_NewLwM2MDevice_Manual, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_CENTER );
+	fgSizer__NewLwM2MDevice_Manual->Add( m_textCtrl__NewLwM2MDevice_Manual_IMSI, 1, wxALL|wxEXPAND, 5 );
+
+	m_staticText__NewLwM2MDevice_Manual_AuthCode = new wxStaticText( m_scrolledWindow_NewLwM2MDevice_Manual, wxID_ANY, wxT("AuthCode:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText__NewLwM2MDevice_Manual_AuthCode->Wrap( -1 );
+	fgSizer__NewLwM2MDevice_Manual->Add( m_staticText__NewLwM2MDevice_Manual_AuthCode, 0, wxALL|wxALIGN_RIGHT, 5 );
+
+	m_textCtrl__NewLwM2MDevice_Manual_AuthCode = new wxTextCtrl( m_scrolledWindow_NewLwM2MDevice_Manual, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_CENTER );
+	fgSizer__NewLwM2MDevice_Manual->Add( m_textCtrl__NewLwM2MDevice_Manual_AuthCode, 1, wxALL|wxEXPAND, 5 );
+
+	m_staticText__NewLwM2MDevice_Manual_PSK = new wxStaticText( m_scrolledWindow_NewLwM2MDevice_Manual, wxID_ANY, wxT("PSK:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText__NewLwM2MDevice_Manual_PSK->Wrap( -1 );
+	fgSizer__NewLwM2MDevice_Manual->Add( m_staticText__NewLwM2MDevice_Manual_PSK, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_textCtrl__NewLwM2MDevice_Manual_PSK = new wxTextCtrl( m_scrolledWindow_NewLwM2MDevice_Manual, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_CENTER );
+	fgSizer__NewLwM2MDevice_Manual->Add( m_textCtrl__NewLwM2MDevice_Manual_PSK, 1, wxALL|wxEXPAND, 5 );
+
+
+	fgSizer__NewLwM2MDevice_Manual->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	wxBoxSizer* bSizer_Button;
+	bSizer_Button = new wxBoxSizer( wxVERTICAL );
+
+	m_button_NewLwM2MDevice_Manual_OK = new wxButton( m_scrolledWindow_NewLwM2MDevice_Manual, wxID_ANY, wxT("确定"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer_Button->Add( m_button_NewLwM2MDevice_Manual_OK, 0, wxALL|wxALIGN_RIGHT, 5 );
+
+
+	fgSizer__NewLwM2MDevice_Manual->Add( bSizer_Button, 1, wxEXPAND, 5 );
+
+
+	bSizer__NewLwM2MDevice_Manual->Add( fgSizer__NewLwM2MDevice_Manual, 1, wxEXPAND, 5 );
+
+	m_textCtrl_NewLwM2MDevice_Manual_ReadMe = new wxTextCtrl( m_scrolledWindow_NewLwM2MDevice_Manual, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY );
+	bSizer__NewLwM2MDevice_Manual->Add( m_textCtrl_NewLwM2MDevice_Manual_ReadMe, 1, wxALL|wxEXPAND, 5 );
+
+
+	m_scrolledWindow_NewLwM2MDevice_Manual->SetSizer( bSizer__NewLwM2MDevice_Manual );
+	m_scrolledWindow_NewLwM2MDevice_Manual->Layout();
+	bSizer__NewLwM2MDevice_Manual->Fit( m_scrolledWindow_NewLwM2MDevice_Manual );
+	m_auinotebook_NewLwM2MDevice->AddPage( m_scrolledWindow_NewLwM2MDevice_Manual, wxT("手工录入"), false, wxNullBitmap );
+
+	bSizer_NewLwM2MDevice->Add( m_auinotebook_NewLwM2MDevice, 1, wxEXPAND | wxALL, 5 );
+
+
+	this->SetSizer( bSizer_NewLwM2MDevice );
+	this->Layout();
+	bSizer_NewLwM2MDevice->Fit( this );
+
+	this->Centre( wxBOTH );
+
+	// Connect Events
+	m_button_NewLwM2MDevice_Manual_OK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewLwM2MDeviceDialog::OnNewLwM2MDeviceManualOK ), NULL, this );
+}
+
+NewLwM2MDeviceDialog::~NewLwM2MDeviceDialog()
+{
+	// Disconnect Events
+	m_button_NewLwM2MDevice_Manual_OK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewLwM2MDeviceDialog::OnNewLwM2MDeviceManualOK ), NULL, this );
 
 }

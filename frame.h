@@ -19,6 +19,7 @@ protected:
     virtual void OnTokenetTextUpdate( wxCommandEvent& event );
     virtual void OnTokenresChoice( wxCommandEvent& event );
     virtual void OnTokenGenerateButtonClick( wxCommandEvent& event );
+    virtual void OnMenuLwM2MDeviceAdd( wxCommandEvent& event );
     virtual void OnMenuLwM2MDeviceListClearAll( wxCommandEvent& event );
     virtual void OnMenuLwM2MDeviceListRemove( wxCommandEvent& event );
     virtual void OnLwM2MDeviceListContextMenu( wxDataViewEvent& event );
