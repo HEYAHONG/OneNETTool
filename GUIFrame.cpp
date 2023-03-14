@@ -223,7 +223,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_LwM2MDeviceList->SetSizer( fgSizer_LwM2MDeviceList );
 	m_LwM2MDeviceList->Layout();
 	fgSizer_LwM2MDeviceList->Fit( m_LwM2MDeviceList );
-	m_main->AddPage( m_LwM2MDeviceList, wxT("LwM2M设备列表"), false, wxNullBitmap );
+	m_main->AddPage( m_LwM2MDeviceList, wxT("OneNET Studio LwM2M设备列表"), false, wxNullBitmap );
 
 	m_menubar = new wxMenuBar( 0 );
 	MenuFile = new wxMenu();

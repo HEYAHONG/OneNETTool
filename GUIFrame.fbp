@@ -1289,7 +1289,7 @@
                 </object>
                 <object class="auinotebookpage" expanded="0">
                     <property name="bitmap"></property>
-                    <property name="label">LwM2M设备列表</property>
+                    <property name="label">OneNET Studio LwM2M设备列表</property>
                     <property name="select">0</property>
                     <object class="wxScrolledWindow" expanded="0">
                         <property name="BottomDockable">1</property>
