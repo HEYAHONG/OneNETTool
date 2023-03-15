@@ -2,6 +2,7 @@
 #include "wx/msgdlg.h"
 #include "wx/log.h"
 #include "wxrc.h"
+#include "serialport.h"
 
 NewLwM2MDevice::NewLwM2MDevice(wxWindow *parent):NewLwM2MDeviceDialog(parent)
 {
@@ -12,7 +13,17 @@ NewLwM2MDevice::NewLwM2MDevice(wxWindow *parent):NewLwM2MDeviceDialog(parent)
         {
             m_textCtrl_NewLwM2MDevice_Manual_ReadMe->SetValue(wxString::FromUTF8(readme_txt));
         }
-
+    }
+    {
+        //从环境变量中获取上次数据
+        if(wxGetEnv(_T("LwM2MNewDeviceAuthCode"),&AuthCode))
+        {
+            m_textCtrl__NewLwM2MDevice_Manual_AuthCode->SetValue(AuthCode);
+        }
+        if(wxGetEnv(_T("LwM2MNewDevicePSK"),&PSK))
+        {
+            m_textCtrl__NewLwM2MDevice_Manual_PSK->SetValue(PSK);
+        }
     }
 }
 
@@ -36,5 +47,9 @@ void NewLwM2MDevice::OnNewLwM2MDeviceManualOK( wxCommandEvent& event )
 
 NewLwM2MDevice::~NewLwM2MDevice()
 {
-
+    {
+        //设置环境变量
+        wxSetEnv(_T("LwM2MNewDeviceAuthCode"),AuthCode);
+        wxSetEnv(_T("LwM2MNewDevicePSK"),PSK);
+    }
 }
