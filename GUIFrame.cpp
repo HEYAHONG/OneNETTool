@@ -364,8 +364,17 @@ AboutDialog::AboutDialog( wxWindow* parent, wxWindowID id, const wxString& title
 	m_hyperlink_depends_wxwidgets = new wxHyperlinkCtrl( m_scrolledWindow_info, wxID_ANY, wxT("wxWidgets"), wxT("https://www.wxWidgets.org"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
 	bSizer_info->Add( m_hyperlink_depends_wxwidgets, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
+	m_hyperlink__depends_boost = new wxHyperlinkCtrl( m_scrolledWindow_info, wxID_ANY, wxT("Boost"), wxT("https://www.boost.org/"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+	bSizer_info->Add( m_hyperlink__depends_boost, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+
 	m_hyperlink_depends_mbedtls = new wxHyperlinkCtrl( m_scrolledWindow_info, wxID_ANY, wxT("MbedTLS"), wxT("https://github.com/Mbed-TLS/mbedtls.git"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
 	bSizer_info->Add( m_hyperlink_depends_mbedtls, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	m_hyperlink__depends_libexpat = new wxHyperlinkCtrl( m_scrolledWindow_info, wxID_ANY, wxT("libexpat"), wxT("https://libexpat.github.io/"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+	bSizer_info->Add( m_hyperlink__depends_libexpat, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	m_hyperlink_libminizip = new wxHyperlinkCtrl( m_scrolledWindow_info, wxID_ANY, wxT("libminizip"), wxT("http://www.zlib.net"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+	bSizer_info->Add( m_hyperlink_libminizip, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 
 	m_scrolledWindow_info->SetSizer( bSizer_info );

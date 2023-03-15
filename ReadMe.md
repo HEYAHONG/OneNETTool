@@ -21,6 +21,9 @@
 
 # 依赖库
 
-- [wxWidgets](https://github.com/wxWidgets/wxWidgets):C++ GUI库
+- [wxWidgets](https://github.com/wxWidgets/wxWidgets):C++ GUI库。
+- [boost](https://www.boost.org/):C++ 增强库。
 - [mbedtls](https://github.com/Mbed-TLS/mbedtls):可移植的TLS库，可移植到多种嵌入式场景。
+- [libexpat](https://libexpat.github.io/): xml库。用于xlsx文件写入。
+- [libminizip](http://www.zlib.net):压缩库。用于xlsx文件写入。
 

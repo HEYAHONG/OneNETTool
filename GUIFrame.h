@@ -141,7 +141,10 @@ class AboutDialog : public wxDialog
 		wxStaticLine* m_staticline_2;
 		wxStaticText* m_staticText_info_depends;
 		wxHyperlinkCtrl* m_hyperlink_depends_wxwidgets;
+		wxHyperlinkCtrl* m_hyperlink__depends_boost;
 		wxHyperlinkCtrl* m_hyperlink_depends_mbedtls;
+		wxHyperlinkCtrl* m_hyperlink__depends_libexpat;
+		wxHyperlinkCtrl* m_hyperlink_libminizip;
 		wxPanel* m_panel_license;
 		wxRichTextCtrl* m_richText_license;
 
