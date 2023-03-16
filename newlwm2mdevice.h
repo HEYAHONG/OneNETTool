@@ -16,6 +16,7 @@ public:
 
 protected:
     virtual void OnNewLwM2MDeviceManualOK( wxCommandEvent& event );
+    virtual void OnNewLwM2MDeviceATGet( wxCommandEvent& event );
 
 private:
 };

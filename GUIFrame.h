@@ -36,6 +36,8 @@
 #include <wx/hyperlink.h>
 #include <wx/richtext/richtextctrl.h>
 #include <wx/dialog.h>
+#include <wx/combobox.h>
+#include <wx/gbsizer.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -178,10 +180,28 @@ class NewLwM2MDeviceDialog : public wxDialog
 		wxStaticText* m_staticText__NewLwM2MDevice_Manual_PSK;
 		wxTextCtrl* m_textCtrl__NewLwM2MDevice_Manual_PSK;
 		wxButton* m_button_NewLwM2MDevice_Manual_OK;
+		wxStaticLine* m_staticline4;
 		wxTextCtrl* m_textCtrl_NewLwM2MDevice_Manual_ReadMe;
+		wxScrolledWindow* m_scrolledWindow_NewLwM2MDevice_AT;
+		wxStaticText* m_staticText_NewLwM2MDevice_ComPort;
+		wxComboBox* m_comboBox_NewLwM2MDevice_ComPort;
+		wxStaticText* m_staticText_NewLwM2MDevice_DataRate;
+		wxComboBox* m_comboBox_NewLwM2MDevice_DataRate;
+		wxStaticText* m_staticText_NewLwM2MDevice_DataBits;
+		wxChoice* m_choice_NewLwM2MDevice_DataBits;
+		wxStaticText* m_staticText_NewLwM2MDevice_StopBits;
+		wxChoice* m_choice_NewLwM2MDevice_StopBits;
+		wxStaticText* m_staticText_NewLwM2MDevice_FlowControl;
+		wxChoice* m_choice_NewLwM2MDevice_FlowControl;
+		wxStaticText* m_staticText_NewLwM2MDevice_Parity;
+		wxChoice* m_choice_NewLwM2MDevice_Parity;
+		wxButton* m_button_NewLwM2MDevice_AT_Get;
+		wxStaticLine* m_staticline3;
+		wxTextCtrl* m_textCtrl_NewLwM2MDevice_AT_ReadMe;
 
 		// Virtual event handlers, override them in your derived class
 		virtual void OnNewLwM2MDeviceManualOK( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnNewLwM2MDeviceATGet( wxCommandEvent& event ) { event.Skip(); }
 
 
 	public:

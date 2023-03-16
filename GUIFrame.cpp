@@ -480,6 +480,9 @@ NewLwM2MDeviceDialog::NewLwM2MDeviceDialog( wxWindow* parent, wxWindowID id, con
 
 	bSizer__NewLwM2MDevice_Manual->Add( fgSizer__NewLwM2MDevice_Manual, 1, wxEXPAND, 5 );
 
+	m_staticline4 = new wxStaticLine( m_scrolledWindow_NewLwM2MDevice_Manual, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL );
+	bSizer__NewLwM2MDevice_Manual->Add( m_staticline4, 0, wxEXPAND | wxALL, 5 );
+
 	m_textCtrl_NewLwM2MDevice_Manual_ReadMe = new wxTextCtrl( m_scrolledWindow_NewLwM2MDevice_Manual, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY );
 	bSizer__NewLwM2MDevice_Manual->Add( m_textCtrl_NewLwM2MDevice_Manual_ReadMe, 1, wxALL|wxEXPAND, 5 );
 
@@ -487,7 +490,115 @@ NewLwM2MDeviceDialog::NewLwM2MDeviceDialog( wxWindow* parent, wxWindowID id, con
 	m_scrolledWindow_NewLwM2MDevice_Manual->SetSizer( bSizer__NewLwM2MDevice_Manual );
 	m_scrolledWindow_NewLwM2MDevice_Manual->Layout();
 	bSizer__NewLwM2MDevice_Manual->Fit( m_scrolledWindow_NewLwM2MDevice_Manual );
-	m_auinotebook_NewLwM2MDevice->AddPage( m_scrolledWindow_NewLwM2MDevice_Manual, wxT("手工录入"), false, wxNullBitmap );
+	m_auinotebook_NewLwM2MDevice->AddPage( m_scrolledWindow_NewLwM2MDevice_Manual, wxT("手工录入"), true, wxNullBitmap );
+	m_scrolledWindow_NewLwM2MDevice_AT = new wxScrolledWindow( m_auinotebook_NewLwM2MDevice, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL );
+	m_scrolledWindow_NewLwM2MDevice_AT->SetScrollRate( 5, 5 );
+	wxGridBagSizer* gbSizer_NewLwM2MDevice_AT;
+	gbSizer_NewLwM2MDevice_AT = new wxGridBagSizer( 0, 0 );
+	gbSizer_NewLwM2MDevice_AT->SetFlexibleDirection( wxVERTICAL );
+	gbSizer_NewLwM2MDevice_AT->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+
+	wxFlexGridSizer* fgSizer_NewLwM2MDevice_AT;
+	fgSizer_NewLwM2MDevice_AT = new wxFlexGridSizer( 0, 2, 0, 0 );
+	fgSizer_NewLwM2MDevice_AT->SetFlexibleDirection( wxBOTH );
+	fgSizer_NewLwM2MDevice_AT->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+
+
+	fgSizer_NewLwM2MDevice_AT->Add( 200, 0, 1, wxEXPAND, 5 );
+
+
+	fgSizer_NewLwM2MDevice_AT->Add( 200, 0, 1, wxEXPAND, 5 );
+
+	m_staticText_NewLwM2MDevice_ComPort = new wxStaticText( m_scrolledWindow_NewLwM2MDevice_AT, wxID_ANY, wxT("串口号:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText_NewLwM2MDevice_ComPort->Wrap( -1 );
+	fgSizer_NewLwM2MDevice_AT->Add( m_staticText_NewLwM2MDevice_ComPort, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_comboBox_NewLwM2MDevice_ComPort = new wxComboBox( m_scrolledWindow_NewLwM2MDevice_AT, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_DROPDOWN );
+	fgSizer_NewLwM2MDevice_AT->Add( m_comboBox_NewLwM2MDevice_ComPort, 0, wxALL|wxEXPAND, 5 );
+
+	m_staticText_NewLwM2MDevice_DataRate = new wxStaticText( m_scrolledWindow_NewLwM2MDevice_AT, wxID_ANY, wxT("波特率:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText_NewLwM2MDevice_DataRate->Wrap( -1 );
+	fgSizer_NewLwM2MDevice_AT->Add( m_staticText_NewLwM2MDevice_DataRate, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_comboBox_NewLwM2MDevice_DataRate = new wxComboBox( m_scrolledWindow_NewLwM2MDevice_AT, wxID_ANY, wxT("9600"), wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+	m_comboBox_NewLwM2MDevice_DataRate->Append( wxT("1200") );
+	m_comboBox_NewLwM2MDevice_DataRate->Append( wxT("2400") );
+	m_comboBox_NewLwM2MDevice_DataRate->Append( wxT("4800") );
+	m_comboBox_NewLwM2MDevice_DataRate->Append( wxT("9600") );
+	m_comboBox_NewLwM2MDevice_DataRate->Append( wxT("19200") );
+	m_comboBox_NewLwM2MDevice_DataRate->Append( wxT("38400") );
+	m_comboBox_NewLwM2MDevice_DataRate->Append( wxT("57600") );
+	m_comboBox_NewLwM2MDevice_DataRate->Append( wxT("115200") );
+	fgSizer_NewLwM2MDevice_AT->Add( m_comboBox_NewLwM2MDevice_DataRate, 0, wxALL|wxEXPAND, 5 );
+
+	m_staticText_NewLwM2MDevice_DataBits = new wxStaticText( m_scrolledWindow_NewLwM2MDevice_AT, wxID_ANY, wxT("数据位:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText_NewLwM2MDevice_DataBits->Wrap( -1 );
+	fgSizer_NewLwM2MDevice_AT->Add( m_staticText_NewLwM2MDevice_DataBits, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	wxString m_choice_NewLwM2MDevice_DataBitsChoices[] = { wxT("8"), wxT("7") };
+	int m_choice_NewLwM2MDevice_DataBitsNChoices = sizeof( m_choice_NewLwM2MDevice_DataBitsChoices ) / sizeof( wxString );
+	m_choice_NewLwM2MDevice_DataBits = new wxChoice( m_scrolledWindow_NewLwM2MDevice_AT, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice_NewLwM2MDevice_DataBitsNChoices, m_choice_NewLwM2MDevice_DataBitsChoices, 0 );
+	m_choice_NewLwM2MDevice_DataBits->SetSelection( 0 );
+	fgSizer_NewLwM2MDevice_AT->Add( m_choice_NewLwM2MDevice_DataBits, 0, wxALL|wxEXPAND, 5 );
+
+	m_staticText_NewLwM2MDevice_StopBits = new wxStaticText( m_scrolledWindow_NewLwM2MDevice_AT, wxID_ANY, wxT("停止位:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText_NewLwM2MDevice_StopBits->Wrap( -1 );
+	fgSizer_NewLwM2MDevice_AT->Add( m_staticText_NewLwM2MDevice_StopBits, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	wxString m_choice_NewLwM2MDevice_StopBitsChoices[] = { wxT("1"), wxT("1.5"), wxT("2") };
+	int m_choice_NewLwM2MDevice_StopBitsNChoices = sizeof( m_choice_NewLwM2MDevice_StopBitsChoices ) / sizeof( wxString );
+	m_choice_NewLwM2MDevice_StopBits = new wxChoice( m_scrolledWindow_NewLwM2MDevice_AT, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice_NewLwM2MDevice_StopBitsNChoices, m_choice_NewLwM2MDevice_StopBitsChoices, 0 );
+	m_choice_NewLwM2MDevice_StopBits->SetSelection( 0 );
+	fgSizer_NewLwM2MDevice_AT->Add( m_choice_NewLwM2MDevice_StopBits, 0, wxALL|wxEXPAND, 5 );
+
+	m_staticText_NewLwM2MDevice_FlowControl = new wxStaticText( m_scrolledWindow_NewLwM2MDevice_AT, wxID_ANY, wxT("流控:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText_NewLwM2MDevice_FlowControl->Wrap( -1 );
+	fgSizer_NewLwM2MDevice_AT->Add( m_staticText_NewLwM2MDevice_FlowControl, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	wxString m_choice_NewLwM2MDevice_FlowControlChoices[] = { wxT("none"), wxT("software"), wxT("hardware") };
+	int m_choice_NewLwM2MDevice_FlowControlNChoices = sizeof( m_choice_NewLwM2MDevice_FlowControlChoices ) / sizeof( wxString );
+	m_choice_NewLwM2MDevice_FlowControl = new wxChoice( m_scrolledWindow_NewLwM2MDevice_AT, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice_NewLwM2MDevice_FlowControlNChoices, m_choice_NewLwM2MDevice_FlowControlChoices, 0 );
+	m_choice_NewLwM2MDevice_FlowControl->SetSelection( 0 );
+	fgSizer_NewLwM2MDevice_AT->Add( m_choice_NewLwM2MDevice_FlowControl, 0, wxALL|wxEXPAND, 5 );
+
+	m_staticText_NewLwM2MDevice_Parity = new wxStaticText( m_scrolledWindow_NewLwM2MDevice_AT, wxID_ANY, wxT("校验:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText_NewLwM2MDevice_Parity->Wrap( -1 );
+	fgSizer_NewLwM2MDevice_AT->Add( m_staticText_NewLwM2MDevice_Parity, 0, wxALL|wxALIGN_RIGHT, 5 );
+
+	wxString m_choice_NewLwM2MDevice_ParityChoices[] = { wxT("none"), wxT("odd"), wxT("even") };
+	int m_choice_NewLwM2MDevice_ParityNChoices = sizeof( m_choice_NewLwM2MDevice_ParityChoices ) / sizeof( wxString );
+	m_choice_NewLwM2MDevice_Parity = new wxChoice( m_scrolledWindow_NewLwM2MDevice_AT, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice_NewLwM2MDevice_ParityNChoices, m_choice_NewLwM2MDevice_ParityChoices, 0 );
+	m_choice_NewLwM2MDevice_Parity->SetSelection( 0 );
+	fgSizer_NewLwM2MDevice_AT->Add( m_choice_NewLwM2MDevice_Parity, 0, wxALL|wxEXPAND, 5 );
+
+
+	fgSizer_NewLwM2MDevice_AT->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	wxBoxSizer* bSizer_NewLwM2MDevice_AT;
+	bSizer_NewLwM2MDevice_AT = new wxBoxSizer( wxHORIZONTAL );
+
+	m_button_NewLwM2MDevice_AT_Get = new wxButton( m_scrolledWindow_NewLwM2MDevice_AT, wxID_ANY, wxT("获取设备信息"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer_NewLwM2MDevice_AT->Add( m_button_NewLwM2MDevice_AT_Get, 1, wxALL, 5 );
+
+
+	fgSizer_NewLwM2MDevice_AT->Add( bSizer_NewLwM2MDevice_AT, 1, wxEXPAND, 5 );
+
+
+	gbSizer_NewLwM2MDevice_AT->Add( fgSizer_NewLwM2MDevice_AT, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
+
+	m_staticline3 = new wxStaticLine( m_scrolledWindow_NewLwM2MDevice_AT, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL );
+	gbSizer_NewLwM2MDevice_AT->Add( m_staticline3, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, 5 );
+
+	m_textCtrl_NewLwM2MDevice_AT_ReadMe = new wxTextCtrl( m_scrolledWindow_NewLwM2MDevice_AT, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY );
+	m_textCtrl_NewLwM2MDevice_AT_ReadMe->SetMinSize( wxSize( -1,200 ) );
+
+	gbSizer_NewLwM2MDevice_AT->Add( m_textCtrl_NewLwM2MDevice_AT_ReadMe, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
+
+
+	m_scrolledWindow_NewLwM2MDevice_AT->SetSizer( gbSizer_NewLwM2MDevice_AT );
+	m_scrolledWindow_NewLwM2MDevice_AT->Layout();
+	gbSizer_NewLwM2MDevice_AT->Fit( m_scrolledWindow_NewLwM2MDevice_AT );
+	m_auinotebook_NewLwM2MDevice->AddPage( m_scrolledWindow_NewLwM2MDevice_AT, wxT("AT指令"), false, wxNullBitmap );
 
 	bSizer_NewLwM2MDevice->Add( m_auinotebook_NewLwM2MDevice, 1, wxEXPAND | wxALL, 5 );
 
@@ -500,11 +611,13 @@ NewLwM2MDeviceDialog::NewLwM2MDeviceDialog( wxWindow* parent, wxWindowID id, con
 
 	// Connect Events
 	m_button_NewLwM2MDevice_Manual_OK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewLwM2MDeviceDialog::OnNewLwM2MDeviceManualOK ), NULL, this );
+	m_button_NewLwM2MDevice_AT_Get->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewLwM2MDeviceDialog::OnNewLwM2MDeviceATGet ), NULL, this );
 }
 
 NewLwM2MDeviceDialog::~NewLwM2MDeviceDialog()
 {
 	// Disconnect Events
 	m_button_NewLwM2MDevice_Manual_OK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewLwM2MDeviceDialog::OnNewLwM2MDeviceManualOK ), NULL, this );
+	m_button_NewLwM2MDevice_AT_Get->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewLwM2MDeviceDialog::OnNewLwM2MDeviceATGet ), NULL, this );
 
 }

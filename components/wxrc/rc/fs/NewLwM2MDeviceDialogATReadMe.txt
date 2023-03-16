@@ -1,0 +1,3 @@
+通过以下AT指令获取IMEI与IMSI并把IMEI作为设备名:
+AT+CIMI:查询IMSI
+AT+CGSN=1:查询IMEI
