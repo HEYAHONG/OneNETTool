@@ -1,5 +1,8 @@
 #include "serialport.h"
 #include "boost/asio.hpp"
+#include "memory"
+#include <thread>
+#include <chrono>
 
 
 serialport::serialport():sp(NULL)
@@ -211,12 +214,30 @@ std::string serialport::readall()
         }
         uint8_t _buff[4096]= {0};
         boost::asio::mutable_buffer buff(_buff,sizeof(_buff));
-        size_t length=sp->read_some(buff);
-        if(length==0)
+        std::shared_ptr<size_t> length=std::make_shared<size_t>();
+        (*length.get())=0;
+        sp->async_read_some(buff,[=](boost::system::error_code,std::size_t bytes){(*length.get())=bytes;});
+        try
+        {
+            std::chrono::steady_clock::time_point start=std::chrono::steady_clock::now();
+            while((*length.get())==0)
+            {
+                sp_io.get()->run_for(std::chrono::milliseconds(1));
+                if(start+std::chrono::milliseconds(500) < std::chrono::steady_clock::now())
+                {
+                    break;
+                }
+            }
+        }
+        catch(...)
+        {
+
+        }
+        if((*length.get())==0)
         {
             return std::string();
         }
-        return std::string((const char *)buff.data(),length);
+        return std::string((const char *)buff.data(),*(length.get()));
     }
     catch(...)
     {
