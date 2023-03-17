@@ -288,7 +288,7 @@ void NewLwM2MDevice::OnNewLwM2MDeviceATGet( wxCommandEvent& event )
                 wxRegEx IMSIReg(_T("[0-9]{14,15}"));
                 if(!IMSIReg.IsValid())
                 {
-                    wxMessageBox(_T("正则表达式无效!"),_T("错误"));
+                    wxMessageBox(_T("IMSI正则表达式无效!"),_T("错误"));
                 }
                 if(IMSIReg.Matches(Receive))
                 {
@@ -324,10 +324,10 @@ void NewLwM2MDevice::OnNewLwM2MDeviceATGet( wxCommandEvent& event )
             {
                 wxString Receive=wxString::FromUTF8(data.c_str());
                 wxLogMessage(_T("接收到串口数据:\n%s\n"),Receive);
-                wxRegEx IMEIReg(_T("[0-9]{15}(?:[0-9]{2})?"));
+                wxRegEx IMEIReg(_T("[0-9]{15,17}"));
                 if(!IMEIReg.IsValid())
                 {
-                   wxMessageBox(_T("正则表达式无效!"),_T("错误"));
+                   wxMessageBox(_T("IMEI正则表达式无效!"),_T("错误"));
                 }
                 if(IMEIReg.Matches(Receive))
                 {

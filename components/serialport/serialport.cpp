@@ -216,6 +216,7 @@ std::string serialport::readall()
         boost::asio::mutable_buffer buff(_buff,sizeof(_buff));
         std::shared_ptr<size_t> length=std::make_shared<size_t>();
         (*length.get())=0;
+#ifdef __WXMSW__
         sp->async_read_some(buff,[=](boost::system::error_code,std::size_t bytes){(*length.get())=bytes;});
         try
         {
@@ -233,6 +234,10 @@ std::string serialport::readall()
         {
 
         }
+#else
+        //TODO:非windows下异步读取有问题，暂时使用同步读取
+        (*length.get())=sp->read_some(buff);
+#endif
         if((*length.get())==0)
         {
             return std::string();
