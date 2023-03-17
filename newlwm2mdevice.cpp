@@ -4,6 +4,7 @@
 #include "wxrc.h"
 #include "serialport.h"
 #include "wx/dir.h"
+#include "wx/regex.h"
 #include <thread>
 
 #ifdef __WXMSW__
@@ -284,12 +285,14 @@ void NewLwM2MDevice::OnNewLwM2MDeviceATGet( wxCommandEvent& event )
             {
                 wxString Receive=wxString::FromUTF8(data.c_str());
                 wxLogMessage(_T("接收到串口数据:\n%s\n"),Receive);
-                int pos=-1;
-                if((pos=Receive.Find(_T("+CIMI:")))!=wxNOT_FOUND)
+                wxRegEx IMSIReg(_T("[0-9]{14,15}"));
+                if(!IMSIReg.IsValid())
                 {
-                    pos+=strlen("+CIMI:");
-                    wxString IMSI=Receive.substr(pos);
-                    IMSI=IMSI.substr(0,IMSI.Find('\r'));
+                    wxMessageBox(_T("正则表达式无效!"),_T("错误"));
+                }
+                if(IMSIReg.Matches(Receive))
+                {
+                    IMSI=IMSIReg.GetMatch(Receive,0);
                     m_textCtrl__NewLwM2MDevice_Manual_IMSI->SetValue(IMSI);
                 }
                 else
@@ -321,12 +324,14 @@ void NewLwM2MDevice::OnNewLwM2MDeviceATGet( wxCommandEvent& event )
             {
                 wxString Receive=wxString::FromUTF8(data.c_str());
                 wxLogMessage(_T("接收到串口数据:\n%s\n"),Receive);
-                int pos=-1;
-                if((pos=Receive.Find(_T("+CGSN:")))!=wxNOT_FOUND)
+                wxRegEx IMEIReg(_T("[0-9]{15}(?:[0-9]{2})?"));
+                if(!IMEIReg.IsValid())
                 {
-                    pos+=strlen("+CGSN:");
-                    wxString IMEI=Receive.substr(pos);
-                    IMEI=IMEI.substr(0,IMEI.Find('\r'));
+                   wxMessageBox(_T("正则表达式无效!"),_T("错误"));
+                }
+                if(IMEIReg.Matches(Receive))
+                {
+                    IMEI=IMEIReg.GetMatch(Receive,0);
                     m_textCtrl__NewLwM2MDevice_Manual_IMEI->SetValue(IMEI);
                     m_textCtrl_NewLwM2MDevice_Manual_DeviceName->SetValue(IMEI);
                 }
