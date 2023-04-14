@@ -51,6 +51,15 @@ extern "C"
  */
 void OneNETCommonInit();
 
+/** \brief 判断字符串是否相同
+ *
+ * \param str1 const char* 字符串1
+ * \param str2 const char* 字符串2
+ * \return bool 是否相同
+ *
+ */
+bool OneNETStringIsSame(const char * str1,const char * str2);
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus
