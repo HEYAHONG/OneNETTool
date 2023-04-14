@@ -430,13 +430,13 @@ bool OneNETOneJsonPropertyPost(struct OneNETOneJsonContext * ctx,OneNETOneJsonPr
     {
         //添加id(13位数字)
         char buff[32]= {0};
-        const char *id=buff;
+        const char *id_str=buff;
         snprintf(buff,sizeof(buff)-1, "%" PRIu64,id);
         if(strlen(buff)>13)
         {
-            id=&buff[strlen(buff)-13];
+            id_str=&buff[strlen(buff)-13];
         }
-        cJSON_AddStringToObject(cjson,"id",id);
+        cJSON_AddStringToObject(cjson,"id",id_str);
     }
 
     {
