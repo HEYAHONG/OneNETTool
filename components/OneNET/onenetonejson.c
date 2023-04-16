@@ -146,7 +146,7 @@ bool OneNETOneJsonInputMQTTMessage(struct OneNETOneJsonContext * ctx,const char 
                 ply_start=&plies_store[i+1];
             }
 
-            if((sizeof(plies)/sizeof(plies[0])-1) <= ply_count)
+            if((sizeof(plies)/sizeof(plies[0])-1) < ply_count)
             {
                 //层数过多
                 break;
