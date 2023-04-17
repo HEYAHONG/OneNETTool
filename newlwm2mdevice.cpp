@@ -327,7 +327,7 @@ void NewLwM2MDevice::OnNewLwM2MDeviceATGet( wxCommandEvent& event )
                 wxRegEx IMEIReg(_T("[0-9]{15,17}"));
                 if(!IMEIReg.IsValid())
                 {
-                   wxMessageBox(_T("IMEI正则表达式无效!"),_T("错误"));
+                    wxMessageBox(_T("IMEI正则表达式无效!"),_T("错误"));
                 }
                 if(IMEIReg.Matches(Receive))
                 {

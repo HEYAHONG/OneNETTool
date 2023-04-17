@@ -4,6 +4,7 @@
 #include <wx/app.h>
 #include <wx/timer.h>
 #include <queue>
+#include <vector>
 #include <mutex>
 #include <functional>
 
@@ -41,6 +42,8 @@ private:
             }
         }
     };
+    std::vector<std::function<void()>> OnExitEvent;
+    std::mutex OnExitEventLock;
 public:
     /*
     *
@@ -52,6 +55,16 @@ public:
         UIEvent.push(cb);
     };
     friend class Frame;
+    /*
+    *
+    *添加退出事件
+    */
+    void AddOnExitEvent(std::function<void()> cb)
+    {
+        std::lock_guard<std::mutex> lock(OnExitEventLock);
+        OnExitEvent.push_back(cb);
+    };
+
 };
 
 /*

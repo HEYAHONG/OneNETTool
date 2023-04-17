@@ -3,14 +3,44 @@
 #include "GUIFrame.h"
 #include "wxrc.h"
 #include <vector>
+#include <mosquittopp.h>
 
 class App;
 
-class Frame:public MainFrame
+class Frame:public MainFrame,public mosqpp::mosquittopp
 {
 public:
     Frame();
     virtual ~Frame();
+
+    //mosquitto回调函数
+    virtual void on_connect(int /*rc*/);
+    virtual void on_connect_with_flags(int /*rc*/, int /*flags*/)
+    {
+        return;
+    }
+    virtual void on_disconnect(int /*rc*/);
+    virtual void on_publish(int /*mid*/)
+    {
+        return;
+    }
+    virtual void on_message(const struct mosquitto_message * /*message*/)
+    {
+        return;
+    }
+    virtual void on_subscribe(int /*mid*/, int /*qos_count*/, const int * /*granted_qos*/)
+    {
+        return;
+    }
+    virtual void on_unsubscribe(int /*mid*/)
+    {
+        return;
+    }
+    virtual void on_log(int /*level*/, const char * /*str*/);
+    virtual void on_error()
+    {
+        return;
+    }
 
 
 protected:
@@ -24,6 +54,8 @@ protected:
     virtual void OnMenuLwM2MDeviceListRemove( wxCommandEvent& event );
     virtual void OnLwM2MDeviceListContextMenu( wxDataViewEvent& event );
     virtual void OnLwM2MDeviceListSaveButtonClick( wxCommandEvent& event );
+    virtual void OnMQTTDeviceServerConnectButtonClick( wxCommandEvent& event );
+    virtual void OnMQTTDeviceServerDisconnectButtonClick( wxCommandEvent& event );
     virtual void OnButtonLwM2MDeviceListClearAllClick( wxCommandEvent& event );
     virtual void OnMenuFileSubExit( wxCommandEvent& event );
     virtual void OnMenuLinksSubOneNET( wxCommandEvent& event );
@@ -51,6 +83,9 @@ private:
     void ClearAllLwM2MDevice();
     void AddLwM2MDevice(LwM2MDevice device);
     void RemoveLwM2MDevice(size_t index);
+    wxString TokenGenerate();
+    bool CheckMQTTDeviceConnectInfo();
+    bool CheckMQTTTokenInfo();
 
 };
 

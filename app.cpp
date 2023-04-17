@@ -27,6 +27,13 @@ bool App::OnInit()
 
 int App::OnExit()
 {
+    for(const std::function<void()> &cb:OnExitEvent)
+    {
+        if(cb!=NULL)
+        {
+            cb();
+        }
+    }
     return wxApp::OnExit();
 }
 

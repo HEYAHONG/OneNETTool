@@ -224,6 +224,111 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_LwM2MDeviceList->Layout();
 	fgSizer_LwM2MDeviceList->Fit( m_LwM2MDeviceList );
 	m_main->AddPage( m_LwM2MDeviceList, wxT("OneNET Studio LwM2M设备列表"), false, wxNullBitmap );
+	m_MQTTDevice = new wxScrolledWindow( m_main, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL );
+	m_MQTTDevice->SetScrollRate( 5, 5 );
+	wxBoxSizer* bSizer_MQTTDevice;
+	bSizer_MQTTDevice = new wxBoxSizer( wxVERTICAL );
+
+	m_listbook_MQTTDevice = new wxListbook( m_MQTTDevice, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLB_DEFAULT );
+	m_panel_MQTTDevice_ConnectInfo = new wxPanel( m_listbook_MQTTDevice, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxFlexGridSizer* fgSizer_MQTTDevice_ConnectInfo;
+	fgSizer_MQTTDevice_ConnectInfo = new wxFlexGridSizer( 0, 2, 0, 0 );
+	fgSizer_MQTTDevice_ConnectInfo->SetFlexibleDirection( wxBOTH );
+	fgSizer_MQTTDevice_ConnectInfo->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+
+	m_staticText_MQTTDeviceServerAddr = new wxStaticText( m_panel_MQTTDevice_ConnectInfo, wxID_ANY, wxT("MQTT服务地址:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText_MQTTDeviceServerAddr->Wrap( -1 );
+	fgSizer_MQTTDevice_ConnectInfo->Add( m_staticText_MQTTDeviceServerAddr, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+
+	m_comboBox_MQTTDeviceServerAddr = new wxComboBox( m_panel_MQTTDevice_ConnectInfo, wxID_ANY, wxT("studio-mqtt.heclouds.com"), wxDefaultPosition, wxDefaultSize, 0, NULL, wxTE_PROCESS_ENTER );
+	m_comboBox_MQTTDeviceServerAddr->Append( wxT("studio-mqtt.heclouds.com") );
+	m_comboBox_MQTTDeviceServerAddr->Append( wxT("studio-mqtts.heclouds.com") );
+	m_comboBox_MQTTDeviceServerAddr->SetSelection( 0 );
+	fgSizer_MQTTDevice_ConnectInfo->Add( m_comboBox_MQTTDeviceServerAddr, 0, wxALL|wxEXPAND, 5 );
+
+	m_staticText22 = new wxStaticText( m_panel_MQTTDevice_ConnectInfo, wxID_ANY, wxT("端口号:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText22->Wrap( -1 );
+	fgSizer_MQTTDevice_ConnectInfo->Add( m_staticText22, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_comboBox_MQTTDeviceServerPort = new wxComboBox( m_panel_MQTTDevice_ConnectInfo, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+	m_comboBox_MQTTDeviceServerPort->Append( wxT("1883") );
+	m_comboBox_MQTTDeviceServerPort->Append( wxT("8883") );
+	m_comboBox_MQTTDeviceServerPort->SetSelection( 0 );
+	fgSizer_MQTTDevice_ConnectInfo->Add( m_comboBox_MQTTDeviceServerPort, 0, wxALL|wxEXPAND, 5 );
+
+	m_staticText23 = new wxStaticText( m_panel_MQTTDevice_ConnectInfo, wxID_ANY, wxT("TLS:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText23->Wrap( -1 );
+	fgSizer_MQTTDevice_ConnectInfo->Add( m_staticText23, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_checkBox_MQTTDeviceServerTLS = new wxCheckBox( m_panel_MQTTDevice_ConnectInfo, wxID_ANY, wxT("TLS/SSL"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer_MQTTDevice_ConnectInfo->Add( m_checkBox_MQTTDeviceServerTLS, 0, wxALL, 5 );
+
+	m_staticText24 = new wxStaticText( m_panel_MQTTDevice_ConnectInfo, wxID_ANY, wxT("CA证书:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText24->Wrap( -1 );
+	fgSizer_MQTTDevice_ConnectInfo->Add( m_staticText24, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_textCtrl_MQTTDeviceServerCA = new wxTextCtrl( m_panel_MQTTDevice_ConnectInfo, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
+	m_textCtrl_MQTTDeviceServerCA->SetMinSize( wxSize( 600,50 ) );
+
+	fgSizer_MQTTDevice_ConnectInfo->Add( m_textCtrl_MQTTDeviceServerCA, 0, wxALL, 5 );
+
+	m_staticText25 = new wxStaticText( m_panel_MQTTDevice_ConnectInfo, wxID_ANY, wxT("客户端证书:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText25->Wrap( -1 );
+	fgSizer_MQTTDevice_ConnectInfo->Add( m_staticText25, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_textCtrl_MQTTDeviceServerCert = new wxTextCtrl( m_panel_MQTTDevice_ConnectInfo, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
+	m_textCtrl_MQTTDeviceServerCert->SetMinSize( wxSize( -1,50 ) );
+
+	fgSizer_MQTTDevice_ConnectInfo->Add( m_textCtrl_MQTTDeviceServerCert, 0, wxALL|wxEXPAND, 5 );
+
+	m_staticText26 = new wxStaticText( m_panel_MQTTDevice_ConnectInfo, wxID_ANY, wxT("客户端密钥:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText26->Wrap( -1 );
+	fgSizer_MQTTDevice_ConnectInfo->Add( m_staticText26, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_textCtrl_MQTTDeviceServerCertKey = new wxTextCtrl( m_panel_MQTTDevice_ConnectInfo, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
+	m_textCtrl_MQTTDeviceServerCertKey->SetMinSize( wxSize( -1,50 ) );
+
+	fgSizer_MQTTDevice_ConnectInfo->Add( m_textCtrl_MQTTDeviceServerCertKey, 1, wxALL|wxEXPAND, 5 );
+
+
+	fgSizer_MQTTDevice_ConnectInfo->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	wxBoxSizer* bSizer14;
+	bSizer14 = new wxBoxSizer( wxHORIZONTAL );
+
+	m_button_MQTTDeviceServerConnect = new wxButton( m_panel_MQTTDevice_ConnectInfo, wxID_ANY, wxT("连接"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer14->Add( m_button_MQTTDeviceServerConnect, 1, wxALL, 5 );
+
+	m_button_MQTTDeviceServerDisconnect = new wxButton( m_panel_MQTTDevice_ConnectInfo, wxID_ANY, wxT("断开连接"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button_MQTTDeviceServerDisconnect->Enable( false );
+
+	bSizer14->Add( m_button_MQTTDeviceServerDisconnect, 1, wxALL, 5 );
+
+
+	fgSizer_MQTTDevice_ConnectInfo->Add( bSizer14, 1, wxEXPAND, 5 );
+
+
+	m_panel_MQTTDevice_ConnectInfo->SetSizer( fgSizer_MQTTDevice_ConnectInfo );
+	m_panel_MQTTDevice_ConnectInfo->Layout();
+	fgSizer_MQTTDevice_ConnectInfo->Fit( m_panel_MQTTDevice_ConnectInfo );
+	m_listbook_MQTTDevice->AddPage( m_panel_MQTTDevice_ConnectInfo, wxT("连接参数"), false );
+	#ifdef __WXGTK__ // Small icon style not supported in GTK
+	wxListView* m_listbook_MQTTDeviceListView = m_listbook_MQTTDevice->GetListView();
+	long m_listbook_MQTTDeviceFlags = m_listbook_MQTTDeviceListView->GetWindowStyleFlag();
+	if( m_listbook_MQTTDeviceFlags & wxLC_SMALL_ICON )
+	{
+		m_listbook_MQTTDeviceFlags = ( m_listbook_MQTTDeviceFlags & ~wxLC_SMALL_ICON ) | wxLC_ICON;
+	}
+	m_listbook_MQTTDeviceListView->SetWindowStyleFlag( m_listbook_MQTTDeviceFlags );
+	#endif
+
+	bSizer_MQTTDevice->Add( m_listbook_MQTTDevice, 1, wxEXPAND | wxALL, 5 );
+
+
+	m_MQTTDevice->SetSizer( bSizer_MQTTDevice );
+	m_MQTTDevice->Layout();
+	bSizer_MQTTDevice->Fit( m_MQTTDevice );
+	m_main->AddPage( m_MQTTDevice, wxT("MQTT设备"), false, wxNullBitmap );
 
 	m_menubar = new wxMenuBar( 0 );
 	MenuFile = new wxMenu();
@@ -290,6 +395,8 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_dataViewListCtrl_LwM2MDeviceList->Connect( wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler( MainFrame::OnLwM2MDeviceListContextMenu ), NULL, this );
 	m_button_LwM2MDeviceList_ClearAll->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::OnButtonLwM2MDeviceListClearAllClick ), NULL, this );
 	m_button_LwM2MDeviceList_Save->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::OnLwM2MDeviceListSaveButtonClick ), NULL, this );
+	m_button_MQTTDeviceServerConnect->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::OnMQTTDeviceServerConnectButtonClick ), NULL, this );
+	m_button_MQTTDeviceServerDisconnect->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::OnMQTTDeviceServerDisconnectButtonClick ), NULL, this );
 	MenuFile->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::OnMenuFileSubExit ), this, MenuFileSubExit->GetId());
 	MenuLinks->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::OnMenuLinksSubOneNET ), this, MenuLinksSubOneNET->GetId());
 	MenuLinks->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::OnMenuLinksSubOneNETToken ), this, MenuLinksSubOneNETToken->GetId());
@@ -307,6 +414,8 @@ MainFrame::~MainFrame()
 	m_dataViewListCtrl_LwM2MDeviceList->Disconnect( wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler( MainFrame::OnLwM2MDeviceListContextMenu ), NULL, this );
 	m_button_LwM2MDeviceList_ClearAll->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::OnButtonLwM2MDeviceListClearAllClick ), NULL, this );
 	m_button_LwM2MDeviceList_Save->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::OnLwM2MDeviceListSaveButtonClick ), NULL, this );
+	m_button_MQTTDeviceServerConnect->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::OnMQTTDeviceServerConnectButtonClick ), NULL, this );
+	m_button_MQTTDeviceServerDisconnect->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::OnMQTTDeviceServerDisconnectButtonClick ), NULL, this );
 
 	m_mgr.UnInit();
 
@@ -375,6 +484,9 @@ AboutDialog::AboutDialog( wxWindow* parent, wxWindowID id, const wxString& title
 
 	m_hyperlink_libminizip = new wxHyperlinkCtrl( m_scrolledWindow_info, wxID_ANY, wxT("libminizip"), wxT("http://www.zlib.net"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
 	bSizer_info->Add( m_hyperlink_libminizip, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	m_hyperlink_mosquitto = new wxHyperlinkCtrl( m_scrolledWindow_info, wxID_ANY, wxT("mosquitto"), wxT("https://www.mosquitto.org/"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+	bSizer_info->Add( m_hyperlink_mosquitto, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 
 	m_scrolledWindow_info->SetSizer( bSizer_info );

@@ -27,16 +27,19 @@
 #include <wx/scrolwin.h>
 #include <wx/menu.h>
 #include <wx/dataview.h>
+#include <wx/combobox.h>
+#include <wx/checkbox.h>
+#include <wx/panel.h>
+#include <wx/listbook.h>
+#include <wx/listctrl.h>
 #include <wx/aui/auibook.h>
 #include <wx/statusbr.h>
-#include <wx/panel.h>
 #include <wx/frame.h>
 #include <wx/aui/aui.h>
 #include <wx/statline.h>
 #include <wx/hyperlink.h>
 #include <wx/richtext/richtextctrl.h>
 #include <wx/dialog.h>
-#include <wx/combobox.h>
 #include <wx/gbsizer.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -82,6 +85,23 @@ class MainFrame : public wxFrame
 		wxTextCtrl* m_textCtrl_LwM2MDeviceList;
 		wxButton* m_button_LwM2MDeviceList_ClearAll;
 		wxButton* m_button_LwM2MDeviceList_Save;
+		wxScrolledWindow* m_MQTTDevice;
+		wxListbook* m_listbook_MQTTDevice;
+		wxPanel* m_panel_MQTTDevice_ConnectInfo;
+		wxStaticText* m_staticText_MQTTDeviceServerAddr;
+		wxComboBox* m_comboBox_MQTTDeviceServerAddr;
+		wxStaticText* m_staticText22;
+		wxComboBox* m_comboBox_MQTTDeviceServerPort;
+		wxStaticText* m_staticText23;
+		wxCheckBox* m_checkBox_MQTTDeviceServerTLS;
+		wxStaticText* m_staticText24;
+		wxTextCtrl* m_textCtrl_MQTTDeviceServerCA;
+		wxStaticText* m_staticText25;
+		wxTextCtrl* m_textCtrl_MQTTDeviceServerCert;
+		wxStaticText* m_staticText26;
+		wxTextCtrl* m_textCtrl_MQTTDeviceServerCertKey;
+		wxButton* m_button_MQTTDeviceServerConnect;
+		wxButton* m_button_MQTTDeviceServerDisconnect;
 		wxMenuBar* m_menubar;
 		wxMenu* MenuFile;
 		wxMenu* MenuLinks;
@@ -103,6 +123,8 @@ class MainFrame : public wxFrame
 		virtual void OnLwM2MDeviceListContextMenu( wxDataViewEvent& event ) { event.Skip(); }
 		virtual void OnButtonLwM2MDeviceListClearAllClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnLwM2MDeviceListSaveButtonClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnMQTTDeviceServerConnectButtonClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnMQTTDeviceServerDisconnectButtonClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnMenuFileSubExit( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnMenuLinksSubOneNET( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnMenuLinksSubOneNETToken( wxCommandEvent& event ) { event.Skip(); }
@@ -147,6 +169,7 @@ class AboutDialog : public wxDialog
 		wxHyperlinkCtrl* m_hyperlink_depends_mbedtls;
 		wxHyperlinkCtrl* m_hyperlink__depends_libexpat;
 		wxHyperlinkCtrl* m_hyperlink_libminizip;
+		wxHyperlinkCtrl* m_hyperlink_mosquitto;
 		wxPanel* m_panel_license;
 		wxRichTextCtrl* m_richText_license;
 
