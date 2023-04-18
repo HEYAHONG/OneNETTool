@@ -319,6 +319,60 @@ typedef struct __OneNETOneJsonEventPostReplyCallback
  */
 OneNETOneJsonEventPostReplyCallback * OneNETOneJsonOnEventPostReplyCallback(struct OneNETOneJsonContext * ctx,OneNETOneJsonEventPostReplyCallback * callback);
 
+typedef struct
+{
+    //子设备产品ID
+    const char *productid;
+    //子设备产品名称,当productid与devicename均有效时才能表示子设备。
+    const char *devicename;
+    //上报属性数组起始
+    OneNETOneJsonPropertyPostParam *properties_start;
+    //上报属性数组长度
+    size_t properties_size;
+    //上报事件数组起始
+    OneNETOneJsonEventPostParam *events_start;
+    //上报事件数组长度
+    size_t events_size;
+} OneNETOneJsonPackPostParam;
+
+/** \brief OneJson打包上报
+ *
+ * \param ctx struct OneNETOneJsonContext* OneJson上下文指针,不可为NULL
+ * \param params[] OneNETOneJsonPackPostParam 打包上报参数数组起始地址,注意:打包上报参数中的指针由用户管理(用户自行创建与删除)
+ * \param params_length size_t 打包上报参数数组长度
+ * \param id uint64_t 消息id
+ * \return bool 是否发送成功
+ *
+ */
+bool OneNETOneJsonPackPost(struct OneNETOneJsonContext * ctx,OneNETOneJsonPackPostParam params[],size_t params_length,uint64_t id);
+
+typedef struct __OneNETOneJsonPackPostReplyCallback
+{
+    /** \brief 打包上报回调函数函数
+     *
+     * \param ctx struct __OneNETOneJsonPackPostReplyCallback* 打包上报回调函数函数
+     * \param id uint64_t OneJson的id
+     * \param code int OneJson的返回代码。200表示成功
+     * \param msg const char* OneJson的消息
+     *
+     */
+    void (*OnPackPostReply)(struct __OneNETOneJsonPackPostReplyCallback *ctx,uint64_t id,int code,const char *msg);
+    //用户指针,本库不使用
+    void *user_ptr;
+} OneNETOneJsonPackPostReplyCallback;
+
+/** \brief OneJson打包上报回调函数
+ *
+ * \param ctx struct OneNETOneJsonContext* OneJson上下文指针,不可为NULL
+ * \param callback OneNETOneJsonPackPostReplyCallback* 待设置的OneJson打包上报回调函数指针,可为NULL(表示仅访问当前上下文的OneJson打包上报回调函数)
+ * \return OneNETOneJsonEventPostReplyCallback* OneJson打包上报回调函数指针,当ctx参数为NULL时值为NULL
+ *
+ */
+OneNETOneJsonPackPostReplyCallback * OneNETOneJsonOnPackPostReplyCallback(struct OneNETOneJsonContext * ctx,OneNETOneJsonPackPostReplyCallback * callback);
+
+
+
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus
