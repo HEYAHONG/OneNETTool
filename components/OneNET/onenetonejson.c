@@ -19,6 +19,8 @@ struct OneNETOneJsonContext
     OneNETOneJsonPropertySetCallback on_property_set_callback;
     //属性获取回调函数
     OneNETOneJsonPropertyGetCallback on_property_get_callback;
+    //事件上报回调函数
+    OneNETOneJsonEventPostReplyCallback on_event_post_reply_callback;
 };
 
 
@@ -363,6 +365,30 @@ bool OneNETOneJsonInputMQTTMessage(struct OneNETOneJsonContext * ctx,const char 
     }
 
 
+    if(plies_size >= 5 && OneNETStringIsSame(plies[4],"event"))
+    {
+        if(plies_size == 7 && OneNETStringIsSame(plies[5],"post") && OneNETStringIsSame(plies[6],"reply"))
+        {
+            //事件上报回复
+            cJSON *cjson_id=cJSON_GetObjectItem(reqjson,"id");
+            cJSON *cjson_code=cJSON_GetObjectItem(reqjson,"code");
+            cJSON *cjson_msg=cJSON_GetObjectItem(reqjson,"msg");
+            if(cJSON_IsString(cjson_id) && cJSON_IsNumber(cjson_code) && cJSON_IsString(cjson_msg))
+            {
+                uint64_t id=0;
+                sscanf(cJSON_GetStringValue(cjson_id), "%" PRIu64,&id);
+                //回复的参数正确
+                if(ctx->on_event_post_reply_callback.OnEventPostReply!=NULL)
+                {
+                    ctx->on_event_post_reply_callback.OnEventPostReply(&ctx->on_event_post_reply_callback,id,cJSON_GetNumberValue(cjson_code),cJSON_GetStringValue(cjson_msg));
+                    ret=true;
+                }
+            }
+        }
+
+    }
+
+
 clean_reqjson:
     if(reqjson!=NULL)
     {
@@ -518,6 +544,118 @@ OneNETOneJsonPropertyGetCallback * OneNETOneJsonOnPropertyGetCallback(struct One
             ctx->on_property_get_callback=(*callback);
         }
         return &ctx->on_property_get_callback;
+    }
+    return NULL;
+}
+
+bool OneNETOneJsonEventPost(struct OneNETOneJsonContext * ctx,OneNETOneJsonEventPostParam params[],size_t params_length,uint64_t id)
+{
+    if(ctx == NULL || params == NULL || params_length == 0)
+    {
+        return false;
+    }
+
+    if(ctx->mqtt_context.MQTTPublish==NULL)
+    {
+        return false;
+    }
+
+    if(ctx->product_id==NULL || ctx->device_name ==NULL)
+    {
+        return false;
+    }
+
+    bool ret=false;
+
+    cJSON *cjson=cJSON_CreateObject();
+    if(cjson==NULL)
+    {
+        goto clean_cjson;
+    }
+
+    //添加version
+    cJSON_AddStringToObject(cjson,"version","1.0");
+
+    {
+        //添加id(13位数字)
+        char buff[32]= {0};
+        const char *id_str=buff;
+        snprintf(buff,sizeof(buff)-1, "%" PRIu64,id);
+        if(strlen(buff)>13)
+        {
+            id_str=&buff[strlen(buff)-13];
+        }
+        cJSON_AddStringToObject(cjson,"id",id_str);
+    }
+
+    {
+        //添加事件数据
+        cJSON *cjson_params=cJSON_AddObjectToObject(cjson,"params");
+        for(size_t i=0; i<params_length; i++)
+        {
+            OneNETOneJsonEventPostParam *param=&params[i];
+            if(param->identifier == NULL)
+            {
+                continue;
+            }
+            cJSON * cjson_params_identifier=cJSON_AddObjectToObject(cjson_params,param->identifier);
+            cJSON_AddNumberToObject(cjson_params_identifier,"time",param->timestamp);
+            cJSON * cjson_params_value=cJSON_AddObjectToObject(cjson_params_identifier,"value");
+            if(param->params_start!=NULL && param->params_size != 0)
+            {
+                for(size_t j=0; j<param->params_size; j++)
+                {
+                    OneNETOneJsonPropertyParam *propertyparam=&param->params_start[j];
+                    if(propertyparam->key ==NULL || propertyparam->value == NULL)
+                    {
+                        continue;
+                    }
+                    cJSON_AddItemToObject(cjson_params_value,propertyparam->key,cJSON_Duplicate(propertyparam->value,true));
+                }
+            }
+
+        }
+    }
+
+    {
+        //发送MQTT消息
+        size_t topic_length=50+strlen(ctx->product_id)+strlen(ctx->device_name);
+        char * topic=(char *)OneNETMalloc(topic_length);
+        if(topic==NULL)
+        {
+            goto clean_cjson;
+        }
+        memset(topic,0,topic_length);
+        snprintf(topic,topic_length,"$sys/%s/%s/thing/event/post",ctx->product_id,ctx->device_name);
+        char * payload=(char *)cJSON_Print(cjson);
+        if(payload==NULL)
+        {
+            OneNETFree(topic);
+            goto clean_cjson;
+        }
+        ret=ctx->mqtt_context.MQTTPublish(&ctx->mqtt_context,topic,payload);
+        OneNETFree(topic);
+        cJSON_free(payload);
+    }
+
+clean_cjson:
+    if(cjson!=NULL)
+    {
+        cJSON_Delete(cjson);
+    }
+    return ret;
+
+}
+
+OneNETOneJsonEventPostReplyCallback * OneNETOneJsonOnEventPostReplyCallback(struct OneNETOneJsonContext * ctx,OneNETOneJsonEventPostReplyCallback * callback)
+{
+    if(ctx!=NULL)
+    {
+        if(callback!=NULL)
+        {
+            ctx->on_event_post_reply_callback=(*callback);
+        }
+        return &ctx->on_event_post_reply_callback;
     }
     return NULL;
 }

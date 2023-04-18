@@ -162,8 +162,10 @@ typedef struct
                                                 {\
                                                 if(Param.key!=NULL)\
                                                     OneNETFree((void*)Param.key);\
+                                                    Param.key=NULL;\
                                                 if(Param.value!=NULL)\
                                                     cJSON_Delete(Param.value);\
+                                                    Param.value=NULL;\
                                                 }
 
 
@@ -205,7 +207,7 @@ typedef struct __OneNETOneJsonPropertyPostReplyCallback
  *
  * \param ctx struct OneNETOneJsonContext* OneJson上下文指针,不可为NULL
  * \param callback OneNETOneJsonPropertyPostReplyCallback* 待设置的OneJson属性上报回调函数指针,可为NULL(表示仅访问当前上下文的OneJson属性上报回调函数)
- * \return OneNETOneJsonPropertyPostReplyCallback* OneJson属性上报回调函数指针
+ * \return OneNETOneJsonPropertyPostReplyCallback* OneJson属性上报回调函数指针,当ctx参数为NULL时值为NULL
  *
  */
 OneNETOneJsonPropertyPostReplyCallback * OneNETOneJsonOnPropertyPostReplyCallback(struct OneNETOneJsonContext * ctx,OneNETOneJsonPropertyPostReplyCallback * callback);
@@ -229,7 +231,7 @@ typedef struct __OneNETOneJsonPropertySetCallback
  *
  * \param ctx struct OneNETOneJsonContext* OneJson上下文指针,不可为NULL
  * \param callback OneNETOneJsonPropertySetCallback* 待设置的OneJson属性设置回调函数指针,可为NULL(表示仅访问当前上下文的OneJson属性设置回调函数)
- * \return OneNETOneJsonPropertySetCallback* OneJson属性设置回调函数指针
+ * \return OneNETOneJsonPropertySetCallback* OneJson属性设置回调函数指针,当ctx参数为NULL时值为NULL
  *
  */
 OneNETOneJsonPropertySetCallback * OneNETOneJsonOnPropertySetCallback(struct OneNETOneJsonContext * ctx,OneNETOneJsonPropertySetCallback *callback);
@@ -263,11 +265,59 @@ typedef struct __OneNETOneJsonPropertyGetCallback
  *
  * \param ctx struct OneNETOneJsonContext* OneJson上下文指针,不可为NULL
  * \param callback OneNETOneJsonPropertyGetCallback* 待设置的OneJson属性获取回调函数指针,可为NULL(表示仅访问当前上下文的OneJson属性获取回调函数)
- * \return OneNETOneJsonPropertyGetCallback* OneJson属性获取回调函数指针
+ * \return OneNETOneJsonPropertyGetCallback* OneJson属性获取回调函数指针,当ctx参数为NULL时值为NULL
  *
  */
 OneNETOneJsonPropertyGetCallback * OneNETOneJsonOnPropertyGetCallback(struct OneNETOneJsonContext * ctx,OneNETOneJsonPropertyGetCallback *callback);
 
+
+typedef struct
+{
+    //标识（事件）,不可为NULL
+    const char *identifier;
+    //时间戳
+    time_t timestamp;
+    //事件参数数组指针起始
+    OneNETOneJsonPropertyParam *params_start;
+    //事件参数数组长度
+    size_t params_size;
+
+} OneNETOneJsonEventPostParam;
+
+/** \brief OneJson事件上报
+ *
+ * \param ctx struct OneNETOneJsonContext* OneJson上下文指针,不可为NULL
+ * \param params[] OneNETOneJsonEventPostParam 事件上报参数数组起始地址,注意:事件上报参数中的指针由用户管理(用户自行创建与删除)
+ * \param params_length size_t 事件上报参数数组长度
+ * \param id uint64_t 消息id
+ * \return bool 是否发送成功
+ *
+ */
+bool OneNETOneJsonEventPost(struct OneNETOneJsonContext * ctx,OneNETOneJsonEventPostParam params[],size_t params_length,uint64_t id);
+
+typedef struct __OneNETOneJsonEventPostReplyCallback
+{
+    /** \brief 事件上报回调函数函数
+     *
+     * \param ctx struct __OneNETOneJsonEventPostReplyCallback* 事件上报回调函数函数
+     * \param id uint64_t OneJson的id
+     * \param code int OneJson的返回代码。200表示成功
+     * \param msg const char* OneJson的消息
+     *
+     */
+    void (*OnEventPostReply)(struct __OneNETOneJsonEventPostReplyCallback *ctx,uint64_t id,int code,const char *msg);
+    //用户指针,本库不使用
+    void *user_ptr;
+} OneNETOneJsonEventPostReplyCallback;
+
+/** \brief OneJson事件上报回调函数
+ *
+ * \param ctx struct OneNETOneJsonContext* OneJson上下文指针,不可为NULL
+ * \param callback OneNETOneJsonEventPostReplyCallback* 待设置的OneJson事件上报回调函数指针,可为NULL(表示仅访问当前上下文的OneJson事件上报回调函数)
+ * \return OneNETOneJsonEventPostReplyCallback* OneJson事件上报回调函数指针,当ctx参数为NULL时值为NULL
+ *
+ */
+OneNETOneJsonEventPostReplyCallback * OneNETOneJsonOnEventPostReplyCallback(struct OneNETOneJsonContext * ctx,OneNETOneJsonEventPostReplyCallback * callback);
 
 #ifdef __cplusplus
 }
