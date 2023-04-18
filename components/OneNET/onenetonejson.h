@@ -1,5 +1,6 @@
 ﻿#ifndef ONENETONEJSON_H
 #define ONENETONEJSON_H
+#include "onenetcommon.h"
 #include "stdlib.h"
 #include "stdio.h"
 #include "stdint.h"
@@ -128,6 +129,43 @@ typedef struct
     //属性值,通常不可为空,其类型可以为cJSON支持的任意类型（除了Null）
     cJSON *value;
 } OneNETOneJsonPropertyParam;
+
+/** \brief 申请OneNETOneJsonPropertyParam
+ *
+ * \param __key  属性名称
+ * \param __type 可为String,Number,Bool,ObjectReference(对象引用,原cJSON*不受影响),ArrayReference(数组引用,原cJSON*不受影响)
+ * \param __value 值,根据type的不同可为String(const char *),Number(double/int),Bool(true/false),ObjectReference(cJSON*),ArrayReference(cJSNO*)
+ * \return 返回OneNETOneJsonPropertyParam,注意：并非指针。
+ *
+ */
+#define OneNETOneJsonPropertyParamNew(__key,__type,__value) \
+                                                    ({ \
+                                                    OneNETOneJsonPropertyParam ret = {0};\
+                                                    ret.key = (const char *)OneNETStrdup(__key);\
+                                                    ret.value = cJSON_Create##__type(__value);\
+                                                    ret;\
+                                                    })
+//辅助申请OneNETOneJsonPropertyParam的函数,可申请String,Number,Bool,ObjectReference,ArrayReference。
+#define OneNETOneJsonPropertyParamNewString(key,value) OneNETOneJsonPropertyParamNew(key,String,value)
+#define OneNETOneJsonPropertyParamNewNumber(key,value) OneNETOneJsonPropertyParamNew(key,Number,value)
+#define OneNETOneJsonPropertyParamNewBool(key,value) OneNETOneJsonPropertyParamNew(key,Bool,value)
+#define OneNETOneJsonPropertyParamNewObjectReference(key,value) OneNETOneJsonPropertyParamNew(key,ObjectReference,value)
+#define OneNETOneJsonPropertyParamNewArrayReference(key,value) OneNETOneJsonPropertyParamNew(key,ArrayReference,value)
+
+
+/** \brief 释放由OneNETOneJsonPropertyParamNew申请的结构体,注意:不可用于用户自己管理的OneNETOneJsonPropertyParam。
+ *
+ * \param Param 待释放的OneNETOneJsonPropertyParam,仅释放key与value,注意:并非指针
+ *
+ */
+#define OneNETOneJsonPropertyParamDelete(Param) \
+                                                {\
+                                                if(Param.key!=NULL)\
+                                                    OneNETFree((void*)Param.key);\
+                                                if(Param.value!=NULL)\
+                                                    cJSON_Delete(Param.value);\
+                                                }
+
 
 typedef struct
 {
