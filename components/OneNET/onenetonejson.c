@@ -23,6 +23,8 @@ struct OneNETOneJsonContext
     OneNETOneJsonEventPostReplyCallback on_event_post_reply_callback;
     //打包上报回调函数
     OneNETOneJsonPackPostReplyCallback  on_pack_post_reply_callback;
+    //历史上报回调函数
+    OneNETOneJsonHistoryPostReplyCallback on_history_post_reply_callback;
 };
 
 
@@ -406,6 +408,29 @@ bool OneNETOneJsonInputMQTTMessage(struct OneNETOneJsonContext * ctx,const char 
                 if(ctx->on_pack_post_reply_callback.OnPackPostReply!=NULL)
                 {
                     ctx->on_pack_post_reply_callback.OnPackPostReply(&ctx->on_pack_post_reply_callback,id,cJSON_GetNumberValue(cjson_code),cJSON_GetStringValue(cjson_msg));
+                    ret=true;
+                }
+            }
+        }
+
+    }
+
+    if(plies_size >= 5 && OneNETStringIsSame(plies[4],"history"))
+    {
+        if(plies_size == 7 && OneNETStringIsSame(plies[5],"post") && OneNETStringIsSame(plies[6],"reply"))
+        {
+            //打包上报回复
+            cJSON *cjson_id=cJSON_GetObjectItem(reqjson,"id");
+            cJSON *cjson_code=cJSON_GetObjectItem(reqjson,"code");
+            cJSON *cjson_msg=cJSON_GetObjectItem(reqjson,"msg");
+            if(cJSON_IsString(cjson_id) && cJSON_IsNumber(cjson_code) && cJSON_IsString(cjson_msg))
+            {
+                uint64_t id=0;
+                sscanf(cJSON_GetStringValue(cjson_id), "%" PRIu64,&id);
+                //回复的参数正确
+                if(ctx->on_history_post_reply_callback.OnHistoryPostReply!=NULL)
+                {
+                    ctx->on_history_post_reply_callback.OnHistoryPostReply(&ctx->on_history_post_reply_callback,id,cJSON_GetNumberValue(cjson_code),cJSON_GetStringValue(cjson_msg));
                     ret=true;
                 }
             }
@@ -832,6 +857,178 @@ OneNETOneJsonPackPostReplyCallback * OneNETOneJsonOnPackPostReplyCallback(struct
             ctx->on_pack_post_reply_callback=(*callback);
         }
         return &ctx->on_pack_post_reply_callback;
+    }
+    return NULL;
+}
+
+bool OneNETOneJsonHistoryPost(struct OneNETOneJsonContext * ctx,OneNETOneJsonHistoryPostParam params[],size_t params_length,uint64_t id)
+{
+    if(ctx == NULL || params == NULL || params_length == 0)
+    {
+        return false;
+    }
+
+    if(ctx->mqtt_context.MQTTPublish==NULL)
+    {
+        return false;
+    }
+
+    if(ctx->product_id==NULL || ctx->device_name ==NULL)
+    {
+        return false;
+    }
+
+    bool ret=false;
+
+    cJSON *cjson=cJSON_CreateObject();
+    if(cjson==NULL)
+    {
+        goto clean_cjson;
+    }
+
+    //添加version
+    cJSON_AddStringToObject(cjson,"version","1.0");
+
+    {
+        //添加id(13位数字)
+        char buff[32]= {0};
+        const char *id_str=buff;
+        snprintf(buff,sizeof(buff)-1, "%" PRIu64,id);
+        if(strlen(buff)>13)
+        {
+            id_str=&buff[strlen(buff)-13];
+        }
+        cJSON_AddStringToObject(cjson,"id",id_str);
+    }
+
+    {
+        //添加打包数据
+        cJSON *cjson_params=cJSON_AddArrayToObject(cjson,"params");
+        for(size_t i=0; i<params_length; i++)
+        {
+            cJSON *cjson_params_child_item=cJSON_CreateObject();
+            cJSON_AddItemToArray(cjson_params,cjson_params_child_item);
+            OneNETOneJsonHistoryPostParam *param=&params[i];
+            if(param->productid!=NULL &&param->devicename!=NULL)
+            {
+                //identity
+                cJSON *cjson_params_child_item_identity=cJSON_AddObjectToObject(cjson_params_child_item,"identity");
+                cJSON_AddStringToObject(cjson_params_child_item_identity,"productID",param->productid);
+                cJSON_AddStringToObject(cjson_params_child_item_identity,"deviceName",param->devicename);
+            }
+            {
+                //properties
+                cJSON *cjson_params_child_item_properties=cJSON_AddObjectToObject(cjson_params_child_item,"properties");
+                if(param->properties_start!=NULL && param->properties_size!=0)
+                {
+                    for(size_t j=0; j<param->properties_size; j++)
+                    {
+                        OneNETOneJsonHistoryProperty *property_param=&param->properties_start[j];
+                        if(property_param->key == NULL)
+                        {
+                            continue;
+                        }
+                        cJSON *cjson_params_child_item_properties_property=cJSON_AddArrayToObject(cjson_params_child_item_properties,property_param->key);
+                        if(property_param->value_start != NULL && property_param->value_size !=0)
+                        {
+                            for(size_t k=0; k<property_param->value_size; k++)
+                            {
+                                OneNETOneJsonHistoryPropertyValue *property_value_param=&property_param->value_start[k];
+                                if(property_value_param->value == NULL)
+                                {
+                                    continue;
+                                }
+                                cJSON *cjson_params_child_item_properties_property_item=cJSON_CreateObject();
+                                cJSON_AddItemToArray(cjson_params_child_item_properties_property,cjson_params_child_item_properties_property_item);
+                                cJSON_AddNumberToObject(cjson_params_child_item_properties_property_item,"time",property_value_param->timestamp);
+                                cJSON_AddItemToObject(cjson_params_child_item_properties_property_item,"value",cJSON_Duplicate(property_value_param->value,true));
+                            }
+                        }
+
+                    }
+                }
+            }
+            {
+                //events
+                cJSON *cjson_params_child_item_events=cJSON_AddObjectToObject(cjson_params_child_item,"events");
+                if(param->events_start != NULL && param->events_size != 0)
+                {
+                    for(size_t j=0; j<param->events_size; j++)
+                    {
+                        OneNETOneJsonHistoryEvent *event_param=&param->events_start[j];
+                        if(event_param->identifier == NULL)
+                        {
+                            continue;
+                        }
+                        cJSON *cjson_params_child_item_events_event=cJSON_AddArrayToObject(cjson_params_child_item_events,event_param->identifier);
+                        if(event_param->event_start != NULL && event_param->event_size != 0)
+                        {
+                            for(size_t k=0; k<event_param->event_size; k++)
+                            {
+                                OneNETOneJsonHistoryEventValue *event_value_param=&event_param->event_start[k];
+                                cJSON * cjson_params_child_item_events_event_item=cJSON_CreateObject();
+                                cJSON_AddItemToArray(cjson_params_child_item_events_event,cjson_params_child_item_events_event_item);
+                                cJSON_AddNumberToObject(cjson_params_child_item_events_event_item,"time",event_value_param->timestamp);
+                                cJSON * cjson_params_child_item_events_event_item_value=cJSON_AddObjectToObject(cjson_params_child_item_events_event_item,"value");
+                                if(event_value_param->params_start != NULL && event_value_param ->params_size != 0 )
+                                {
+                                    for(size_t l=0; i<event_value_param->params_size; l++)
+                                    {
+                                        OneNETOneJsonPropertyParam * event_value_param_param=&event_value_param->params_start[l];
+                                        if(event_value_param_param->key == NULL || event_value_param_param->value == NULL)
+                                        {
+                                            continue;
+                                        }
+                                        cJSON_AddItemToObject(cjson_params_child_item_events_event_item_value,event_value_param_param->key,cJSON_Duplicate(event_value_param_param->value,true));
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
+    {
+        //发送MQTT消息
+        size_t topic_length=50+strlen(ctx->product_id)+strlen(ctx->device_name);
+        char * topic=(char *)OneNETMalloc(topic_length);
+        if(topic==NULL)
+        {
+            goto clean_cjson;
+        }
+        memset(topic,0,topic_length);
+        snprintf(topic,topic_length,"$sys/%s/%s/thing/history/post",ctx->product_id,ctx->device_name);
+        char * payload=(char *)cJSON_Print(cjson);
+        if(payload==NULL)
+        {
+            OneNETFree(topic);
+            goto clean_cjson;
+        }
+        ret=ctx->mqtt_context.MQTTPublish(&ctx->mqtt_context,topic,payload);
+        OneNETFree(topic);
+        cJSON_free(payload);
+    }
+
+clean_cjson:
+    if(cjson!=NULL)
+    {
+        cJSON_Delete(cjson);
+    }
+    return ret;
+}
+
+OneNETOneJsonHistoryPostReplyCallback * OneNETOneJsonOnHistoryPostReplyCallback(struct OneNETOneJsonContext * ctx,OneNETOneJsonHistoryPostReplyCallback * callback)
+{
+    if(ctx!=NULL)
+    {
+        if(callback!=NULL)
+        {
+            ctx->on_history_post_reply_callback=(*callback);
+        }
+        return &ctx->on_history_post_reply_callback;
     }
     return NULL;
 }

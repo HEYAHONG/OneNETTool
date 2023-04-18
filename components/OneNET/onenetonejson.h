@@ -365,13 +365,102 @@ typedef struct __OneNETOneJsonPackPostReplyCallback
  *
  * \param ctx struct OneNETOneJsonContext* OneJson上下文指针,不可为NULL
  * \param callback OneNETOneJsonPackPostReplyCallback* 待设置的OneJson打包上报回调函数指针,可为NULL(表示仅访问当前上下文的OneJson打包上报回调函数)
- * \return OneNETOneJsonEventPostReplyCallback* OneJson打包上报回调函数指针,当ctx参数为NULL时值为NULL
+ * \return OneNETOneJsonPackPostReplyCallback* OneJson打包上报回调函数指针,当ctx参数为NULL时值为NULL
  *
  */
 OneNETOneJsonPackPostReplyCallback * OneNETOneJsonOnPackPostReplyCallback(struct OneNETOneJsonContext * ctx,OneNETOneJsonPackPostReplyCallback * callback);
 
+typedef struct
+{
+    //属性值,通常不可为空
+    cJSON *value;
+    //时间戳
+    time_t timestamp;
 
+} OneNETOneJsonHistoryPropertyValue;
 
+typedef struct
+{
+    //属性名称,通常不可为空
+    const char *key;
+    //属性值数组起始,通常不可为空
+    OneNETOneJsonHistoryPropertyValue *value_start;
+    //属性值数组长度
+    size_t value_size;
+
+} OneNETOneJsonHistoryProperty;
+
+typedef struct
+{
+    //时间戳
+    time_t timestamp;
+    //事件参数数组指针起始
+    OneNETOneJsonPropertyParam *params_start;
+    //事件参数数组长度
+    size_t params_size;
+} OneNETOneJsonHistoryEventValue;
+
+typedef struct
+{
+    //标识（事件）,不可为NULL
+    const char *identifier;
+    //事件数组起始,通常不可为空
+    OneNETOneJsonHistoryEventValue *event_start;
+    //事件数组长度
+    size_t event_size;
+
+} OneNETOneJsonHistoryEvent;
+
+typedef struct
+{
+    //子设备产品ID
+    const char *productid;
+    //子设备产品名称,当productid与devicename均有效时才能表示子设备。
+    const char *devicename;
+    //上报历史属性数组起始
+    OneNETOneJsonHistoryProperty *properties_start;
+    //上报历史属性数组长度
+    size_t properties_size;
+    //上报历史事件数组起始
+    OneNETOneJsonHistoryEvent *events_start;
+    //上报历史事件数组长度
+    size_t events_size;
+} OneNETOneJsonHistoryPostParam;
+
+/** \brief OneJson历史上报
+ *
+ * \param ctx struct OneNETOneJsonContext* OneJson上下文指针,不可为NULL
+ * \param params[] OneNETOneJsonHistoryPostParam 历史上报参数数组起始地址,注意:历史上报参数中的指针由用户管理(用户自行创建与删除)
+ * \param params_length size_t 历史上报参数数组长度
+ * \param id uint64_t 消息id
+ * \return bool 是否发送成功
+ *
+ */
+bool OneNETOneJsonHistoryPost(struct OneNETOneJsonContext * ctx,OneNETOneJsonHistoryPostParam params[],size_t params_length,uint64_t id);
+
+typedef struct __OneNETOneJsonHistoryPostReplyCallback
+{
+    /** \brief 历史上报回调函数函数
+     *
+     * \param ctx struct __OneNETOneJsonHistoryPostReplyCallback* 历史上报回调函数函数
+     * \param id uint64_t OneJson的id
+     * \param code int OneJson的返回代码。200表示成功
+     * \param msg const char* OneJson的消息
+     *
+     */
+    void (*OnHistoryPostReply)(struct __OneNETOneJsonHistoryPostReplyCallback *ctx,uint64_t id,int code,const char *msg);
+    //用户指针,本库不使用
+    void *user_ptr;
+} OneNETOneJsonHistoryPostReplyCallback;
+
+/** \brief OneJson历史上报回调函数
+ *
+ * \param ctx struct OneNETOneJsonContext* OneJson上下文指针,不可为NULL
+ * \param callback OneNETOneJsonHistoryPostReplyCallback* 待设置的OneJson历史上报回调函数指针,可为NULL(表示仅访问当前上下文的OneJson历史上报回调函数)
+ * \return OneNETOneJsonHistoryPostReplyCallback* OneJson历史上报回调函数指针,当ctx参数为NULL时值为NULL
+ *
+ */
+OneNETOneJsonHistoryPostReplyCallback * OneNETOneJsonOnHistoryPostReplyCallback(struct OneNETOneJsonContext * ctx,OneNETOneJsonHistoryPostReplyCallback * callback);
 
 #ifdef __cplusplus
 }
