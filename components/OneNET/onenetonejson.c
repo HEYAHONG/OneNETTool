@@ -25,6 +25,8 @@ struct OneNETOneJsonContext
     OneNETOneJsonPackPostReplyCallback  on_pack_post_reply_callback;
     //历史上报回调函数
     OneNETOneJsonHistoryPostReplyCallback on_history_post_reply_callback;
+    //服务调用回调函数
+    OneNETOneJsonServiceInvokeCallback on_service_invoke_callback;
 };
 
 
@@ -436,6 +438,72 @@ bool OneNETOneJsonInputMQTTMessage(struct OneNETOneJsonContext * ctx,const char 
             }
         }
 
+    }
+
+    if(plies_size >= 5 && OneNETStringIsSame(plies[4],"service"))
+    {
+        if(plies_size == 7 && OneNETStringIsSame(plies[6],"invoke"))
+        {
+            const char *identifier=plies[5];
+            if(ctx->on_service_invoke_callback.OnServiceInvoke == NULL)
+            {
+                //不支持服务调用
+                goto clean_reqjson;
+            }
+            cJSON *cjson_params=cJSON_GetObjectItem(reqjson,"params");
+
+            cJSON * cjson_id=cJSON_GetObjectItem(reqjson,"id");
+            if(cJSON_IsString(cjson_id))
+            {
+                //返回MQTT消息
+                cJSON * cjson_reply=cJSON_CreateObject();
+                if(cjson_reply!=NULL)
+                {
+                    cJSON_AddStringToObject(cjson_reply,"id",cJSON_GetStringValue(cjson_id));
+                    cJSON_AddNumberToObject(cjson_reply,"code",200);
+                    cJSON_AddStringToObject(cjson_reply,"msg","ok");
+                    {
+                        //调用服务
+                        cJSON* cjson_reply_data=NULL;
+                        if(ctx->on_service_invoke_callback.OnServiceInvoke(&ctx->on_service_invoke_callback,identifier,cjson_params,&cjson_reply_data))
+                        {
+                            if(cjson_reply_data!=NULL)
+                                cJSON_AddItemToObject(cjson_reply,"data",cJSON_Duplicate(cjson_reply_data,true));
+                            if(ctx->on_service_invoke_callback.OnServiceInvokeEnd!=NULL)
+                            {
+                                ctx->on_service_invoke_callback.OnServiceInvokeEnd(&ctx->on_service_invoke_callback,identifier,cjson_params,&cjson_reply_data);
+                            }
+                        }
+                    }
+                    {
+                        size_t topic_length=50+strlen(ctx->product_id)+strlen(ctx->device_name)+strlen(identifier);
+                        char * topic=(char *)OneNETMalloc(topic_length);
+                        if(topic!=NULL)
+                        {
+                            memset(topic,0,topic_length);
+                            snprintf(topic,topic_length,"$sys/%s/%s/thing/service/%s/invoke_reply",ctx->product_id,ctx->device_name,identifier);
+                            char * payload=(char *)cJSON_Print(cjson_reply);
+                            if(payload!=NULL)
+                            {
+                                if(ctx->mqtt_context.MQTTPublish!=NULL)
+                                {
+                                    ret=ctx->mqtt_context.MQTTPublish(&ctx->mqtt_context,topic,payload);
+                                }
+                                OneNETFree(topic);
+                                cJSON_free(payload);
+                            }
+                            else
+                            {
+                                OneNETFree(topic);
+                            }
+
+                        }
+                    }
+                    cJSON_Delete(cjson_reply);
+                }
+
+            }
+        }
     }
 
 
@@ -1029,6 +1097,19 @@ OneNETOneJsonHistoryPostReplyCallback * OneNETOneJsonOnHistoryPostReplyCallback(
             ctx->on_history_post_reply_callback=(*callback);
         }
         return &ctx->on_history_post_reply_callback;
+    }
+    return NULL;
+}
+
+OneNETOneJsonServiceInvokeCallback * OneNETOneJsonOnServiceInvokeCallback(struct OneNETOneJsonContext * ctx,OneNETOneJsonServiceInvokeCallback *callback)
+{
+    if(ctx!=NULL)
+    {
+        if(callback!=NULL)
+        {
+            ctx->on_service_invoke_callback=(*callback);
+        }
+        return &ctx->on_service_invoke_callback;
     }
     return NULL;
 }

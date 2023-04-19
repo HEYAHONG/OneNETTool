@@ -462,6 +462,45 @@ typedef struct __OneNETOneJsonHistoryPostReplyCallback
  */
 OneNETOneJsonHistoryPostReplyCallback * OneNETOneJsonOnHistoryPostReplyCallback(struct OneNETOneJsonContext * ctx,OneNETOneJsonHistoryPostReplyCallback * callback);
 
+/********************************************************************************************
+OneJson设备服务调用
+********************************************************************************************/
+
+typedef struct __OneNETOneJsonServiceInvokeCallback
+{
+    /** \brief 服务调用
+     *
+     * \param ctx struct __OneNETOneJsonServiceInvokeCallback*
+     * \param identifier const char* 服务标识
+     * \param params cJSON* 服务参数,类型为object
+     * \param data cJSON** 服务结果返回,需要通过此参数传出一个对象(cJSON *),类型为object
+     * \return bool 是否成功
+     *
+     */
+    bool (*OnServiceInvoke)(struct __OneNETOneJsonServiceInvokeCallback *ctx,const char * identifier,cJSON * params,cJSON **data);
+    /** \brief 服务调用结束,通常用于清理OnServiceInvoke中申请的资源
+     *
+     * \param ctx struct __OneNETOneJsonServiceInvokeCallback*
+     * \param identifier const char* 服务标识
+     * \param params cJSON* 服务参数,类型为object
+     * \param data cJSON** 服务结果返回
+     * \return bool 是否成功
+     *
+     */
+    bool (*OnServiceInvokeEnd)(struct __OneNETOneJsonServiceInvokeCallback *ctx,const char * identifier,cJSON * params,cJSON **data);
+    //用户指针,本库不使用
+    void *user_ptr;
+} OneNETOneJsonServiceInvokeCallback;
+
+/** \brief OneJson服务调用回调函数
+ *
+ * \param ctx struct OneNETOneJsonContext* OneJson上下文指针,不可为NULL
+ * \param callback OneNETOneJsonServiceInvokeCallback* 待设置的OneJson服务调用回调函数指针,可为NULL(表示仅访问当前上下文的OneJson服务调用回调函数)
+ * \return OneNETOneJsonServiceInvokeCallback* OneJson服务调用回调函数指针,当ctx参数为NULL时值为NULL
+ *
+ */
+OneNETOneJsonServiceInvokeCallback * OneNETOneJsonOnServiceInvokeCallback(struct OneNETOneJsonContext * ctx,OneNETOneJsonServiceInvokeCallback *callback);
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus
