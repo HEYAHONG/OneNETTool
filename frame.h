@@ -4,6 +4,7 @@
 #include "wxrc.h"
 #include <vector>
 #include <mosquittopp.h>
+#include "onenetonejson.h"
 
 class App;
 
@@ -24,10 +25,7 @@ public:
     {
         return;
     }
-    virtual void on_message(const struct mosquitto_message * /*message*/)
-    {
-        return;
-    }
+    virtual void on_message(const struct mosquitto_message * /*message*/);
     virtual void on_subscribe(int /*mid*/, int /*qos_count*/, const int * /*granted_qos*/)
     {
         return;
@@ -86,6 +84,14 @@ private:
     wxString TokenGenerate();
     bool CheckMQTTDeviceConnectInfo();
     bool CheckMQTTTokenInfo();
+
+    //onejson上下文
+    struct
+    {
+        wxString productid;
+        wxString devicename;
+    } current_onejson_settings;
+    struct OneNETOneJsonContext *onejson;
 
 };
 

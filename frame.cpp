@@ -21,7 +21,7 @@ extern "C"
 {
 #include "icon.xpm"
 }
-Frame::Frame():MainFrame(NULL),app(*GetInstance())
+Frame::Frame():MainFrame(NULL),app(*GetInstance()),onejson(OneNETOneJsonContextNew())
 {
     SetIcon(wxIcon(icon_xpm));
 
@@ -96,6 +96,39 @@ void Frame::on_connect(int /*rc*/)
 {
     app.AddUIEvent([this]()
     {
+        if(OneNETOneJsonMQTTContext(onejson,NULL)->user_ptr==NULL)
+        {
+            //尚未设置发送回调函数
+            std::function<bool(std::string,std::string)> *cb=new std::function<bool(std::string,std::string)>;
+            app.AddOnExitEvent([cb]()
+            {
+                //应用退出时删除回调函数
+                delete cb;
+            });
+            OneNETOneJsonMQTTContext(onejson,NULL)->user_ptr=cb;
+            OneNETOneJsonMQTTContext(onejson,NULL)->MQTTPublish=[](struct __OneNETMQTTContext * mqttctx,const char *topic,const char *payload) -> bool
+            {
+                if(mqttctx!=NULL && mqttctx->user_ptr!=NULL)
+                {
+                    std::function<bool(std::string,std::string)> cb=*(std::function<bool(std::string,std::string)> *)mqttctx->user_ptr;
+                    if(cb!=NULL)
+                    {
+                        return cb(topic,payload);
+                    }
+                }
+                return false;
+            };
+        }
+
+        //发送回调函数
+        (*(std::function<bool(std::string,std::string)> *)OneNETOneJsonMQTTContext(onejson,NULL)->user_ptr)=[this](std::string topic,std::string payload) -> bool
+        {
+            return MOSQ_ERR_SUCCESS==publish(NULL,topic.c_str(),payload.length(),payload.c_str());
+        };
+
+        //订阅所有有效主题($sys/产品ID/设备名称/#)
+        subscribe(NULL,(wxString("$sys/")+current_onejson_settings.productid+"/"+current_onejson_settings.devicename+"/#").c_str());
+
         wxLogMessage(_T("MQTT 已连接!"));
         m_button_MQTTDeviceServerConnect->Enable(false);
         m_button_MQTTDeviceServerDisconnect->Enable(true);
@@ -113,6 +146,14 @@ void Frame::on_disconnect(int /*rc*/)
         m_button_MQTTDeviceServerDisconnect->Enable(false);
 
     });
+}
+
+void Frame::on_message(const struct mosquitto_message * message)
+{
+    if(message!=NULL)
+    {
+        OneNETOneJsonInputMQTTMessage(onejson,message->topic,std::string((char *)message->payload,message->payloadlen).c_str());
+    }
 }
 
 void Frame::on_log(int level, const char * str)
@@ -375,6 +416,11 @@ void Frame::OnMQTTDeviceServerConnectButtonClick( wxCommandEvent& event )
         }
     });
     wxLogMessage(_T("Server=%s,Port=%d,SSL=%s,CA=%s,Cert=%s,CertKey=%s"),ServerAddr,(int)ServerPort,SSL?_T("true"):_T("false"),CAPath,CertPath,CertKey);
+
+    //设置onejson
+    OneNETOneJsonSetDevInfo(onejson,productid.c_str(),devicename.c_str());
+    current_onejson_settings.productid=productid;
+    current_onejson_settings.devicename=devicename;
 
     //设置MQTT参数
     disconnect();
@@ -669,4 +715,7 @@ Frame::~Frame()
 
     //取消mosquitto初始化
     mosqpp::lib_cleanup();
+
+    //删除onejson
+    OneNETOneJsonContextDelete(onejson);
 }
