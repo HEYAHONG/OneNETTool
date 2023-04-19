@@ -368,6 +368,13 @@ void Frame::OnMQTTDeviceServerConnectButtonClick( wxCommandEvent& event )
     bool SSL=m_checkBox_MQTTDeviceServerTLS->GetValue();
 
     wxString CAPath=wxFileName::CreateTempFileName(_T("ca"));
+    app.AddOnExitEvent([=]()
+    {
+        if(wxFile::Exists(CAPath))
+        {
+            wxRemoveFile(CAPath);
+        }
+    });
     CAPath.Replace(_T("\\"),_T("/"));
     CAPath.Replace(_T(".tmp"),_T(".pem"));
     {
@@ -379,6 +386,13 @@ void Frame::OnMQTTDeviceServerConnectButtonClick( wxCommandEvent& event )
         }
     }
     wxString CertPath=wxFileName::CreateTempFileName(_T("crt"));
+    app.AddOnExitEvent([=]()
+    {
+        if(wxFile::Exists(CertPath))
+        {
+            wxRemoveFile(CertPath);
+        }
+    });
     CertPath.Replace(_T("\\"),_T("/"));
     CertPath.Replace(_T(".tmp"),_T(".pem"));
     {
@@ -390,6 +404,13 @@ void Frame::OnMQTTDeviceServerConnectButtonClick( wxCommandEvent& event )
         }
     }
     wxString CertKey=wxFileName::CreateTempFileName(_T("key"));
+    app.AddOnExitEvent([=]()
+    {
+        if(wxFile::Exists(CertKey))
+        {
+            wxRemoveFile(CertKey);
+        }
+    });
     CertKey.Replace(_T("\\"),_T("/"));
     CertKey.Replace(_T(".tmp"),_T(".pem"));
     {
