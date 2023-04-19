@@ -696,16 +696,6 @@ Frame::~Frame()
         delete UITimer;
         UITimer=NULL;
     }
-    {
-        //关闭日志
-        wxLog::DontCreateOnDemand();
-        wxLog *log=wxLog::SetActiveTarget(new wxLogStderr);
-        if(log!=NULL)
-        {
-            delete log;
-        }
-
-    }
 
     {
         //关闭mosquitto
@@ -718,4 +708,15 @@ Frame::~Frame()
 
     //删除onejson
     OneNETOneJsonContextDelete(onejson);
+
+    {
+        //关闭日志
+        wxLog::DontCreateOnDemand();
+        wxLog *log=wxLog::SetActiveTarget(new wxLogStderr);
+        if(log!=NULL)
+        {
+            delete log;
+        }
+
+    }
 }
