@@ -3,6 +3,9 @@
 #include "GUIFrame.h"
 #include "wxrc.h"
 #include <vector>
+#include <list>
+#include <chrono>
+#include <string>
 #include <mosquittopp.h>
 #include "onenetonejson.h"
 
@@ -92,6 +95,22 @@ private:
         wxString devicename;
     } current_onejson_settings;
     struct OneNETOneJsonContext *onejson;
+
+    //MQTT消息发送与接收记录
+    typedef struct
+    {
+        std::string topic;
+        std::string payload;
+        std::chrono::system_clock::time_point timestamp;
+    } MQTTMessage;
+    size_t MaxMQTTPublishMessageListLength;
+    std::list<MQTTMessage> MQTTPublishMessage;
+    std::mutex  MQTTPublishMessageLock;
+    bool MQTTPublish(std::string topic,std::string payload);
+    size_t MaxMQTTReceiveMessageListLength;
+    std::list<MQTTMessage> MQTTReceiveMessage;
+    std::mutex  MQTTReceiveMessageLock;
+
 
 };
 

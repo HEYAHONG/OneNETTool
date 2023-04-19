@@ -21,7 +21,7 @@ extern "C"
 {
 #include "icon.xpm"
 }
-Frame::Frame():MainFrame(NULL),app(*GetInstance()),onejson(OneNETOneJsonContextNew())
+Frame::Frame():MainFrame(NULL),app(*GetInstance()),onejson(OneNETOneJsonContextNew()),MaxMQTTPublishMessageListLength(200),MaxMQTTReceiveMessageListLength(200)
 {
     SetIcon(wxIcon(icon_xpm));
 
@@ -123,7 +123,7 @@ void Frame::on_connect(int /*rc*/)
         //发送回调函数
         (*(std::function<bool(std::string,std::string)> *)OneNETOneJsonMQTTContext(onejson,NULL)->user_ptr)=[this](std::string topic,std::string payload) -> bool
         {
-            return MOSQ_ERR_SUCCESS==publish(NULL,topic.c_str(),payload.length(),payload.c_str());
+            return MQTTPublish(topic,payload);
         };
 
         //订阅所有有效主题($sys/产品ID/设备名称/#)
@@ -152,7 +152,22 @@ void Frame::on_message(const struct mosquitto_message * message)
 {
     if(message!=NULL)
     {
-        OneNETOneJsonInputMQTTMessage(onejson,message->topic,std::string((char *)message->payload,message->payloadlen).c_str());
+        std::string topic=message->topic;
+        std::string payload=std::string((char *)message->payload,message->payloadlen);
+        {
+            //保存接收的MQTT消息
+            std::lock_guard<std::mutex> lock(MQTTReceiveMessageLock);
+            MQTTMessage msg;
+            msg.topic=topic;
+            msg.payload=payload;
+            msg.timestamp=std::chrono::system_clock::now();
+            MQTTReceiveMessage.push_back(msg);
+            while(MQTTReceiveMessage.size()>MaxMQTTReceiveMessageListLength)
+            {
+                MQTTReceiveMessage.pop_front();
+            }
+        }
+        OneNETOneJsonInputMQTTMessage(onejson,topic.c_str(),payload.c_str());
     }
 }
 
@@ -707,6 +722,24 @@ bool Frame::CheckMQTTTokenInfo()
     }
 
     return true;
+}
+
+bool Frame::MQTTPublish(std::string topic,std::string payload)
+{
+    {
+        //保存发送的MQTT消息
+        std::lock_guard<std::mutex> lock(MQTTPublishMessageLock);
+        MQTTMessage msg;
+        msg.topic=topic;
+        msg.payload=payload;
+        msg.timestamp=std::chrono::system_clock::now();
+        MQTTPublishMessage.push_back(msg);
+        while(MQTTPublishMessage.size()>MaxMQTTPublishMessageListLength)
+        {
+            MQTTPublishMessage.pop_front();
+        }
+    }
+    return MOSQ_ERR_SUCCESS==publish(NULL,topic.c_str(),payload.length(),payload.c_str());
 }
 
 Frame::~Frame()
